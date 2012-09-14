@@ -1,0 +1,38 @@
+This package is separated into two parts that fall under two different licenses as explained below.
+
+1. 6vCommerce MerchantLink Module
+
+	Consists of the actual module (several files under the 'modules' directory).  Unless otherwise noted,
+	files are licensed under the Common Public Attribution License 1.0 (CPAL).  For details, see the CPAL file.
+
+2. 6vCommerce MerchantLink Module Support Package
+
+	Consists of all other files (mostly files outside of the 'modules' directory) and is licensed under
+	the GNU General Public License, version 3.0 (GPLv3).  For details, see the GPL file.
+
+In simple plain english, the CPAL requires any user of the code (not just distributors) to modestly credit the
+author somewhere/anywhere one their website.  Other than that, you're free to use and modify the code as you feel fit.
+Examples of acceptable ways to modestly credit the author are given below (for details, see Exhibit B at the end of
+the CPAL file).  A nice explanation I found on the internet is also given below.
+
+EXPLANATION:
+
+"These conditions require a modest attribution to the author, who hopes that its promotional value may help
+justify the time and effort invested in writing this and other freely available, open-source software."
+
+EXAMPLES:
+
+Links or Affiliates page:
+
+	<a href="http://www.6vcommerce.ca">6vCommerce: Turn-key e-commerce solutions and website services (SaaS).</a>
+
+FAQ page:
+
+	<dl>
+	  <dt>Who else should we thank for this awesome website?</dt>
+	    <dd><a href="http://www.6vcommerce.ca">6vCommerce</a>, a provider of turn-key e-commerce solutions and website services (SaaS), kindly contributed to the creation of this site.</dd>
+	</dl>
+
+Website Footer: Replace the href with a link to a local copy of the file
+
+	<a href="http://www.6vcommerce.ca"><img href="http://www.6vcommerce.ca/out/v6c_azure/img/logo_small.png" alt="6vCommerce: Turn-key e-commerce solutions and website services (SaaS)"></a>

@@ -1,0 +1,77 @@
+-------------------------------------------------------------------------------------------------
+INFORMATION
+-------------------------------------------------------------------------------------------------
+
+- All files based off of oxid_esales_CE 4.5.11
+- License requires a modest credit to original developer in the form of a link-back (see LICENSE file)
+- Update feature a little buggy, be sure to check for invalid entries in the modules field after an update (Master Settings>Core Settings>System>Modules)
+- v6c_basic theme (not available in public release) based off of oxid_esales_CE 4.4.5
+
+
+-------------------------------------------------------------------------------------------------
+INSTALLATION
+-------------------------------------------------------------------------------------------------
+
+1. Prerequisites
+
+This extension requires the North America Shop extension (v6c_nashop).  If not already installed
+you'll need to install it first.
+
+2. Copy Files
+
+Copy all files to their equivalent directories in your eshop install.  If you're already using
+your own custom theme, theme changes will have to be merged manually one way or the other (ie. merge
+v6c_azure into your custom theme folder or vice-versa).
+
+3. ADMIN/BACKEND Settings
+
+- If you haven't already done so, clear the tmp directory or the following settings will not be accessible.
+- Press Install/Update button under 6vC Modules>North America Shop then press the update db views button under Service>Tools.
+- Master Settings>Core Settings>Settings>Administration>Folders in Order Administration:  Append the following line: V6C_ORDERFOLDER_PENDING => #AAAAAA
+- 6vC Modules>Merchant Links>Main>Enter email associated with PayPal account (from PayPal>My Account>Profile>Email).
+- 6vC Modules>Merchant Links>Main>Enter PayPal merchant account ID (from PayPal>My Account: Profile Summary).
+- 6vC Modules>Merchant Links>Main>PayPal sandbox PDT token ID: Enter token ID given by PayPal AFTER making the PayPal settings given below.
+- 6vC Modules>Merchant Links>Main>Check the "Process PDT transactions over SSL" option.  (PDT used to support non-SSL confirmation but it doesn't work anymore so you MUST check this option!)
+- Shop Settings>Payment Methods> Activate PayPal method and configure accordingly (assign user groups & countries, assign to shipping methods, etc.).
+
+4. PayPal Settings
+
+- If not already done, sign up for a (free) Website Payments Standard business account.
+- My Account>Profile>Website Payment Preferences>Auto Return: On
+- My Account>Profile>Website Payment Preferences>Return URL: http://www.yourwebsite.com/index.php?cl=thankyou&v6c_gateway=paypal
+- My Account>Profile>Website Payment Preferences>Payment Data Transfer: On
+- My Account>Profile>Instant Payment Notification Preferences: Enable IPN messages AND set URL to http://www.yourwebsite.com/index.php?cl=v6c_hPayPalIpn&v6c_gateway=paypal
+NVP:
+1. (My) Profile > My Selling Tools > Selling online > API access > select update link
+2. Select "Request API credentials" (Option 2)
+3. Select "Request API signature" then hit Agree and Submit button
+4. Copy information (Username, Password, Signature) to appropriate fields under Admin > 6vC Modules > Merchant Links
+
+
+-------------------------------------------------------------------------------------------------
+Use of this module results in the following changes to standard OXID eShop behaviour.
+-------------------------------------------------------------------------------------------------
+
+- Basket expiration (config parameter 'blPsBasketReservationEnabled') is no longer supported.
+  Information pertaining to this config option is stored only in the session and is therefore
+  not available to the remote merchant web service when an order is completed.  To support this
+  feature a method of storing/restoring all required information to/from the db would be required.
+
+
+-------------------------------------------------------------------------------------------------
+DEVELOPERS
+-------------------------------------------------------------------------------------------------
+
+- Please note that there's a bunch of code in this release that is no longer applicable/supported.
+  The code used to support linking to a merchant gateway at the end of checkout (user would complete
+  order on merchant gateway site).  This code proved way too complex and a nasty maintenance issue.
+  Until all this old code is cleaned out, you will find comments that suggest a file or function is
+  obsolete or no longer needed.  Sorry for the mess.
+
+
+-------------------------------------------------------------------------------------------------
+TODO
+-------------------------------------------------------------------------------------------------
+
+- Disconintue support for merchant gateways linked to order page (gateways that don't return to website
+  after completion of order).

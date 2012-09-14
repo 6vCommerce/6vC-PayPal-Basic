@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<OX>
+    <OXMENU id="NAVIGATION_ESHOPADMIN">
+        <MAINMENU id="v6cmods">
+            <SUBMENU id="v6c_merchantlink" cl="v6c_merchantlink" list="v6c_merchantlinklist">
+                <TAB id="v6c_merchantlink_main" cl="v6c_merchantlinkmain" />
+			</SUBMENU>
+        </MAINMENU>
+    </OXMENU>
+</OX>
