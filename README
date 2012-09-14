@@ -14,8 +14,7 @@ INSTALLATION
 
 1. Prerequisites
 
-This extension requires the North America Shop extension (v6c_nashop).  If not already installed
-you'll need to install it first.
+None.
 
 2. Copy Files
 
@@ -26,20 +25,16 @@ v6c_azure into your custom theme folder or vice-versa).
 3. ADMIN/BACKEND Settings
 
 - If you haven't already done so, clear the tmp directory or the following settings will not be accessible.
-- Press Install/Update button under 6vC Modules>North America Shop then press the update db views button under Service>Tools.
+- Press Install/Update button under 6vC Modules>Merchant Link then press the update db views button under Service>Tools.
 - Master Settings>Core Settings>Settings>Administration>Folders in Order Administration:  Append the following line: V6C_ORDERFOLDER_PENDING => #AAAAAA
 - 6vC Modules>Merchant Links>Main>Enter email associated with PayPal account (from PayPal>My Account>Profile>Email).
 - 6vC Modules>Merchant Links>Main>Enter PayPal merchant account ID (from PayPal>My Account: Profile Summary).
-- 6vC Modules>Merchant Links>Main>PayPal sandbox PDT token ID: Enter token ID given by PayPal AFTER making the PayPal settings given below.
 - 6vC Modules>Merchant Links>Main>Check the "Process PDT transactions over SSL" option.  (PDT used to support non-SSL confirmation but it doesn't work anymore so you MUST check this option!)
 - Shop Settings>Payment Methods> Activate PayPal method and configure accordingly (assign user groups & countries, assign to shipping methods, etc.).
 
 4. PayPal Settings
 
 - If not already done, sign up for a (free) Website Payments Standard business account.
-- My Account>Profile>Website Payment Preferences>Auto Return: On
-- My Account>Profile>Website Payment Preferences>Return URL: http://www.yourwebsite.com/index.php?cl=thankyou&v6c_gateway=paypal
-- My Account>Profile>Website Payment Preferences>Payment Data Transfer: On
 - My Account>Profile>Instant Payment Notification Preferences: Enable IPN messages AND set URL to http://www.yourwebsite.com/index.php?cl=v6c_hPayPalIpn&v6c_gateway=paypal
 NVP:
 1. (My) Profile > My Selling Tools > Selling online > API access > select update link
