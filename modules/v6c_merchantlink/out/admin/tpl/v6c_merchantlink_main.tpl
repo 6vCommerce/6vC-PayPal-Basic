@@ -42,20 +42,6 @@
          </td>
         </tr>
 
-		[{if $oViewConf->v6cIsMdlInst('options')}]
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-            <input type=hidden name=confbools[v6c_blCompactChkOut] value=false>
-            <input type=checkbox name=confbools[v6c_blCompactChkOut] value=true  [{if ($confbools.v6c_blCompactChkOut)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="V6C_HELP_COMPACTCHKOUT" }]
-         </td>
-         <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_COMPACTCHKOUT" }]
-         </td>
-        </tr>
-		[{else}]<input type=hidden name=confbools[v6c_blCompactChkOut] value=false>
-		[{/if}]
-
         <tr class="conftext[{cycle}]">
          <td valign="middle">
             <input type=hidden name=confbools[v6c_blHideSinglePay] value=false>
@@ -139,6 +125,7 @@
          </td>
         </tr>
 
+		[{*
         <tr class="conftext[{cycle}]">
          <td valign="middle">
 			<input type=text class="txt" name=confstrs[v6c_sPayPalPdtTkn] value="[{$confstrs.v6c_sPayPalPdtTkn}]" [{ $readonly}]>
@@ -148,6 +135,7 @@
             [{ oxmultilang ident="V6C_PAYPALPDTTKN" }]
          </td>
         </tr>
+        *}]
 
         <tr class="conftext[{cycle}]">
          <td valign="middle">
@@ -171,6 +159,7 @@
          </td>
         </tr>
 
+		[{*
         <tr class="conftext[{cycle}]">
          <td valign="middle">
 			<input type=text class="txt" name=confstrs[v6c_sPayPalTstEmail] value="[{$confstrs.v6c_sPayPalTstEmail}]" [{ $readonly}]>
@@ -210,6 +199,7 @@
             [{ oxmultilang ident="V6C_PAYPALLOCAL" }]
          </td>
         </tr>
+        *}]
 [{*
         <tr class="conftext[{cycle}]">
          <td valign="middle" class="nowrap">

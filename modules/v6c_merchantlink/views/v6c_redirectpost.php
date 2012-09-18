@@ -125,7 +125,7 @@ class v6c_RedirectPost extends oxUBase
         $this->setShowTopBasket(false);
         $this->setShowRightBasket(false);
 
-        return 'page/checkout/v6c_redirectpost.tpl';
+        return 'custom/v6c_redirectpost.tpl';
     }
 
 
@@ -205,7 +205,7 @@ class v6c_RedirectPost extends oxUBase
     	    if ( $oPayment === false ) {
     	        $this->_v6c_bIntegratedLink = false;
     	    }
-    	    else $this->_v6c_bIntegratedLink = $oPayment->v6cIsLinkedGateway() && $oPayment->v6cGetGatewayLinkType() == 1;
+    	    else $this->_v6c_bIntegratedLink = $oPayment->v6cIsLinkedGateway();
 	    }
 	    return $this->_v6c_bIntegratedLink;
 	}

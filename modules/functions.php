@@ -27,6 +27,7 @@
  */
 
 /**
+ * @deprecated
  * Check if class extensions for a module need updating
  *
  * @param array $aShopExt current shop class extensions
@@ -69,6 +70,7 @@
  }
 
  /**
+ * @deprecated
  * Update class extensions for a module
  *
  * @param array|string $aModName module folder or array thereof

@@ -146,23 +146,6 @@ class v6c_mlPayment extends v6c_mlPayment_parent
 	}
 
 	/**
-	* Returns link type.  If not available, assume default of 0.
-	*
-	* Possible values:
-	* 	0	Original link type in which checkout links to merchant at final step and confirmation is not guaranteed.
-	* 	1	Improved integration where merchant is linked to just for payment info and then checkout continues as usual.
-	*
-	* @return integer
-	*/
-	public function v6cGetGatewayLinkType()
-	{
-	    // Db field may not be available in older versions if update not yet installed
-	    if (isset($this->oxpayments__v6lnktyp->value))
-	        return $this->oxpayments__v6lnktyp->value;
-	    else return 0;
-	}
-
-	/**
      * Returns form post parms for PayPal.  oxBasket must be available from session.
      *
      * @return mixed

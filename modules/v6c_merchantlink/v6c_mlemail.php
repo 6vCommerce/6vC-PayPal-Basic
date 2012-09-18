@@ -41,7 +41,8 @@ class v6c_mlEmail extends v6c_mlEmail_parent
 	/////////////////////// EXTENSIONS ////////////////////////////
 
     /**
-     * Adds new template variable.  Calls parent.
+     * Adds new template variables that can be used to display detailed
+     * PayPal transaction info in confirmation email.
      *
      * @param oxOrder $oOrder   Order object
      * @param string  $sSubject user defined subject [optional]

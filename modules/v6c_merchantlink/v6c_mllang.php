@@ -41,6 +41,9 @@ class v6c_mlLang extends v6c_mlLang_parent
 	/////////////////////// EXTENSIONS ////////////////////////////
 
 	/**
+	 * TODO: Is this still needed?  May not be used anymore since supporting
+	 * PayPal NVP instead of PayPal Standard.
+	 *
      * Handles special case of returning to site from a merchant gateway in which
      * the lang is set from a custom GET var.
      *

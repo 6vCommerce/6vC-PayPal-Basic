@@ -7,8 +7,10 @@ $aLang = array(
 'charset'                                   => 'ISO-8859-15',
 
 // Menu & tab titles
+'v6cmods'    								=> '6vC Settings',
 'v6c_merchantlink'    						=> 'Merchant Links',
 'v6c_merchantlink_main'						=> 'PayPal',
+'V6C_MENUITEM'    							=> '6vC Extensions',
 'V6C_MENUSUBITEM_MERCHLNK'    				=> 'Merchant Link',
 
 // Configuration parameter descriptions and help content
@@ -25,8 +27,8 @@ $aLang = array(
 'V6C_PAYPALEMAIL'							=> 'Email associated with PayPal account.',
 'V6C_PAYPALID'								=> 'PayPal merchant account ID.',
 'V6C_PAYPALPDTTKN'							=> 'PayPal PDT token ID.',
-'V6C_PAYPALSSLPDT'							=> 'Process PDT transactions over SSL.',
-'V6C_MERCHLINKTEST'							=> 'Activate test mode for all linked merchant gateway transactions.',
+'V6C_PAYPALSSLPDT'							=> 'Process all transactions over SSL.',
+'V6C_MERCHLINKTEST'							=> 'Enable test mode: use PayPal Sandbox.',
 'V6C_PAYPALTSTEMAIL'						=> 'Email associated with PayPal sandbox seller account.',
 'V6C_PAYPALTSTID'							=> 'Your PayPal sandbox merchant account ID',
 'V6C_PAYPALTSTPDTTKN'						=> 'PayPal sandbox PDT token ID.',
