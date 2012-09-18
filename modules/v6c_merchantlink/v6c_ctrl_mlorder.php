@@ -50,7 +50,7 @@ class v6c_ctrl_mlOrder extends v6c_ctrl_mlorder_parent
         $sRet = parent::render();
         // Will be available otherwise parent method would have thrown error
         $oPayment = $this->getPayment();
-        if ($oPayment->v6cIsLinkedGateway() && $oPayment->v6cGetGatewayLinkType() == 1)
+        if ($oPayment->v6cIsLinkedGateway())
         {
             /* WIP: Code to save payment authorizations
             // Flag integrated linked merchant gateway step as completed
@@ -81,16 +81,4 @@ class v6c_ctrl_mlOrder extends v6c_ctrl_mlorder_parent
 
 	/////////////////////// ADDITIONS ////////////////////////////
 
-	/**
-     * Returns TRUE if selected payment method a linked gateway and link type
-     * is intended for final step of checkout, otherwise FALSE.
-     *
-     * @return string
-     */
-	public function v6cSelPayIsLnkGateway()
-	{
-		$oPayment = $this->getPayment();
-		if ( $oPayment === false ) { return false; }
-		else { return $oPayment->v6cIsLinkedGateway() && $oPayment->v6cGetGatewayLinkType() == 0; }
-	}
 }

@@ -83,7 +83,7 @@ class v6c_ctrl_mlPayment extends v6c_ctrl_mlPayment_parent
             if (!($sPaymentId = oxConfig::getParameter( 'paymentid' ))) $sPaymentId = oxSession::getVar('paymentid');
             $oPayment = oxNew( 'oxpayment' );
             $oPayment->load( $sPaymentId );
-            if ($oPayment->v6cIsLinkedGateway() && $oPayment->v6cGetGatewayLinkType() == 1)
+            if ($oPayment->v6cIsLinkedGateway())
             {
                 /* WIP: Uncomment when ready to support saved payment authorizations
                 $bUsePrevInfo = oxConfig::getParameter( 'v6c_lnkpaydone' ) == 'true' ? true : false;
