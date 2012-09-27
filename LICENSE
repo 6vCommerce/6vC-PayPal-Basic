@@ -2,13 +2,13 @@ This package is separated into two parts that fall under two different licenses 
 
 1. 6vCommerce MerchantLink Module
 
-	Consists of the actual module (several files under the 'modules' directory).  Unless otherwise noted,
-	files are licensed under the Common Public Attribution License 1.0 (CPAL).  For details, see the CPAL file.
+	Consists of files with 'original' code.  Unless otherwise noted, these files are licensed under the
+	Common Public Attribution License 1.0 (CPAL).  For details, see the CPAL file.
 
 2. 6vCommerce MerchantLink Module Support Package
 
-	Consists of all other files (mostly files outside of the 'modules' directory) and is licensed under
-	the GNU General Public License, version 3.0 (GPLv3).  For details, see the GPL file.
+	Consists of all other files which are licensed under the GNU General Public License, version 3.0 (GPLv3).
+	For details, see the GPL file.
 
 In simple plain english, the CPAL requires any user of the code (not just distributors) to modestly credit the
 author somewhere/anywhere one their website.  Other than that, you're free to use and modify the code as you feel fit.
@@ -22,9 +22,13 @@ justify the time and effort invested in writing this and other freely available,
 
 EXAMPLES:
 
-Links or Affiliates page:
+Links/Credits page:
 
 	<a href="http://www.6vcommerce.ca">6vCommerce: Turn-key e-commerce solutions and website services (SaaS).</a>
+
+	or simply
+
+	<a href="http://www.6vcommerce.ca" title="Turn-key e-commerce solutions and website services (SaaS)">6vCommerce</a>
 
 FAQ page:
 

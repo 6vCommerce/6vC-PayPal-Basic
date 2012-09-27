@@ -13,7 +13,7 @@ FEATURES
 -------------------------------------------------------------------------------------------------
 
 - Supports PayPal Express via NVP API
-- Supports delayed PayPal payment methods (e.g. bank transfers)
+- Supports delayed PayPal payment methods such as e-cheques (orders with delayed payments will not have a paid date)
 - Supports PayPal IPN (for processing of delayed/pending payments)
 - Integrates into payment step of checkout
 - For support of recurring payments you will need to purchase the Pro version (contact 6vCommerce)
@@ -58,6 +58,5 @@ NVP:
 TODO
 -------------------------------------------------------------------------------------------------
 
-- Is PENDING order state still needed now that NOT_FINISHED exists?
-- Check new logic since NOT_FINISHED state was introduced to see if v6c_mlBasket::v6cLoadFromOrder can be eliminated (too maintenance heavy).
+- Give users the option to use a PENDING folder for orders with a delayed payment.
 - Cache authorizations so if user makes changes to basket they do not need to return to paypal (WIP).
