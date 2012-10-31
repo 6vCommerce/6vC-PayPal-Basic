@@ -674,7 +674,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 		{
 			// Only process completed cart payments
 			if ( (strcmp(strtolower($aData['payment_status']), 'completed') == 0 || strcmp(strtolower($aData['payment_status']), 'pending')) &&
-				strcmp(strtolower($aData['txn_type']), 'cart') == 0 )
+				strcmp(strtolower($aData['txn_type']), 'express_checkout') == 0 )
 			{
 				$sEmail = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPayPalTstEmail') : $this->getConfig()->getConfigParam('v6c_sPayPalEmail');
 				if ( strcmp(strtolower($aData['receiver_email']), strtolower($sEmail)) != 0 )
