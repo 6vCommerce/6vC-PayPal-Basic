@@ -10,14 +10,14 @@ class v6c_hPayPalIpn extends oxUBase
     public function render()
     {
 		$oPaymentGateway = oxNew( 'oxPaymentGateway' );
-		try { $oPaymentGateway->confirmPayment(v6c_mlPaymentGateway::V6C_ML_PAYPAL_IPN); }
+		try { $oPaymentGateway->v6cValidateNotification(v6c_mlPaymentGateway::V6C_ML_PAYPAL_IPN); }
 		catch (Exception $oEx)
 		{
-			oxUtils::getInstance()->writeToLog($oEx->getMessage()."\n", 'v6c_log.txt');
+			oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."] ".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\n    ".$oEx->getMessage()."\n", 'v6c_log.txt');
 			return;
 		}
 
-		$this->_confirmOrder($oPaymentGateway);
+		$this->_processNotification($oPaymentGateway);
     }
 
     /**
@@ -27,13 +27,13 @@ class v6c_hPayPalIpn extends oxUBase
      *
      * @return null
      */
-	protected function _confirmOrder($oGateway)
+	protected function _processNotification($oGateway)
 	{
-    	$aCstParms = $oGateway->getCustomParms();
+    	$aCstParms = $oGateway->v6cGetCustomParms();
     	$oOrder = oxNew( 'oxorder' );
 
     	// Check for orders processed but pending payment to due a delayed PayPal payment method such as e-cheques or bank transfers.
-    	if ( strlen($oGateway->getGatewayOrderId()) && $oOrder->v6cLoadByMerchantId($oGateway->getGatewayOrderId()) )
+    	if ( strlen($oGateway->v6cGetGatewayOrderId()) && $oOrder->v6cLoadByMerchantId($oGateway->v6cGetGatewayOrderId()) )
     	{
     	    $oOrder->v6cSetAsPaid();
     	    // Notify admin

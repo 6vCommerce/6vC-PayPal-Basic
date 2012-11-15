@@ -1,5 +1,5 @@
 <?php
-$sLangName  = "English";
+$sLangName  = "Français";
 // -------------------------------
 // RESOURCE IDENTITFIER = STRING
 // -------------------------------

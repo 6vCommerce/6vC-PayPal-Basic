@@ -140,13 +140,13 @@ class v6c_mlOrder extends v6c_mlOrder_parent
         $oGateway = $this->_getGateway();
 
         // Set status and paid date for order according to status received from merchant gateway
-        $sPayStatus = $oGateway->getGatewayPaymentStatus();
+        $sPayStatus = $oGateway->v6cGetGatewayPaymentStatus();
         if (isset($sPayStatus))
         {
             if (strcasecmp($sPayStatus, 'Pending') == 0)
-                $this->_v6cSaveAsComplete($oGateway->getGatewayOrderId(), true);
+                $this->_v6cSaveAsComplete($oGateway->v6cGetGatewayOrderId(), true);
             elseif (strcasecmp($sPayStatus, 'Completed') == 0)
-                $this->_v6cSaveAsComplete($oGateway->getGatewayOrderId());
+                $this->_v6cSaveAsComplete($oGateway->v6cGetGatewayOrderId());
             else //TODO: translate
                 oxUtilsView::getInstance()->addErrorToDisplay('Merchant gateway reported an unknown payment status.');
         }
@@ -155,7 +155,7 @@ class v6c_mlOrder extends v6c_mlOrder_parent
         $oUserPayment = $this->_v6cGetUserPayment();
         if (isset($oUserPayment))
         {
-            $oUserPayment->oxuserpayments__oxvalue = new oxField(serialize($oGateway->getGatewayParms()), oxField::T_RAW);
+            $oUserPayment->oxuserpayments__oxvalue = new oxField(serialize($oGateway->v6cGetGatewayParms()), oxField::T_RAW);
             $oUserPayment->save();
         }
         //TODO: add ELSE to log failure to save parms
@@ -226,7 +226,7 @@ class v6c_mlOrder extends v6c_mlOrder_parent
         $oDb->execute( $sQ );
 
         //updating order object
-        $this->oxorder__oxtransstatus = new oxField( 'OK' );
+        $this->oxorder__oxtransstatus = new oxField( ($bPending ? 'PENDING' : 'OK') );
         $this->oxorder__oxfolder = new oxField( 'ORDERFOLDER_NEW' );
         $this->oxorder__oxbillnr = new oxField( $sGatewayOrderId );
         if (!$bPending) $this->oxorder__oxpaid = new oxField( $sDate );

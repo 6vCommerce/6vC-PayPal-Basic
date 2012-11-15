@@ -81,7 +81,6 @@ class v6c_MerchantLinkMain extends Shop_Config
     protected $_v6c_aClsExt = array(
         'order' => 'v6c_merchantlink/v6c_ctrl_mlorder',
         'payment' => 'v6c_merchantlink/v6c_ctrl_mlpayment',
-        'oxshopcontrol' => 'v6c_merchantlink/v6c_ctrl_mlshopcontrol',
         'thankyou' => 'v6c_merchantlink/v6c_ctrl_mlthankyou',
         'oxbasket' => 'v6c_merchantlink/v6c_mlbasket',
         'oxbasketitem' => 'v6c_merchantlink/v6c_mlbasketitem',
@@ -94,7 +93,6 @@ class v6c_MerchantLinkMain extends Shop_Config
 
     public function v6cInstallML()
     {
-    	//TODO: add v6c_googlechkout to insall when supported
     	$oDB = oxDb::getDb();
     	$sVersion = $this->getConfig()->getActiveShop()->oxshops__oxversion->value;
     	$aInstallSteps = oxSession::getVar('v6c_aMlInstSteps');
@@ -117,6 +115,8 @@ class v6c_MerchantLinkMain extends Shop_Config
     */
     private function _v6cInstallCheck4_5(&$aInstStps)
     {
+        $oDB = oxDb::getDb();
+
         // Class extensions installed/updated?
     	if ( !v6cIsModuleClassesSet(oxConfig::getInstance()->getConfigParam('aModules'), $this->_v6c_aClsExt, $this->_v6c_aModuleName) )
     	{
@@ -141,6 +141,8 @@ class v6c_MerchantLinkMain extends Shop_Config
     */
     private function _v6cInstallExec4_5($aInstallSteps)
     {
+        $oDB = oxDb::getDb();
+
         // Install/update module class extensions
     	if (in_array('InstModExt', $aInstallSteps))
     	{

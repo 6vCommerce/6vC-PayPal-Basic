@@ -2,10 +2,13 @@
 INFORMATION
 -------------------------------------------------------------------------------------------------
 
-- Last updated for compatibility with OXID eShop CE 4.6.4
-- Backwards compatible with older 4.5.x and 4.6.x versions of OXID.
+- This module integrates PayPal Express Checkout into an OXID eShop
+- For more information on how Express Checkout works, visit PayPal
+  (e.g. https://merchant.paypal.com/ca/cgi-bin/marketingweb?cmd=_render-content&content_ID=merchant/express_checkout&nav=2.1.5)
+- This module provides a generic interface to merchant gateways.  PayPal is simply used by default.
 - License requires a modest credit to original developer in the form of a link-back (see LICENSE file)
 - Have questions AFTER reading this?  Go here: http://forum.oxid-esales.com/showthread.php?t=16200
+
 
 
 -------------------------------------------------------------------------------------------------
@@ -13,24 +16,30 @@ FEATURES
 -------------------------------------------------------------------------------------------------
 
 - Supports PayPal Express via NVP API
-- Supports delayed PayPal payment methods such as e-cheques (orders with delayed payments will not have a paid date)
+- Supports delayed PayPal payment methods such as e-cheques
 - Supports PayPal IPN (for processing of delayed/pending payments)
 - Integrates into payment step of checkout
-- For support of recurring payments you will need to purchase the Pro version (contact 6vCommerce)
+- For support of recurring payments you will need to purchase the extended version (visit www.6vCommerce.ca)
 
 
 -------------------------------------------------------------------------------------------------
 INSTALLATION
 -------------------------------------------------------------------------------------------------
 
-1. Prerequisites
+1. Prerequisites & Compatability
 
-None.
+- Compatible with OXID eShop 4.6.x (last verified with 4.6.5).
+- With some additional setup steps, also compatible with 4.5.x (last verifed with 4.5.11).
 
 2. Copy Files
 
-- Copy all folders in package to root web directory.
-- If using a 4.5.x version of OXID: also copy all folders within v6c_merchantlink to the root web directory.
+- Copy all directories in package to root web directory.
+- If using a 4.5.x version of OXID also copy directories within v6c_merchantlink as given below.
+  Begin executong these commands from within the v6c_merchantlink directory.
+  	$ cd <path_to_v6c_merchantlink>
+  	$ chown -R <owner>:<group> *
+	$ find . -mindepth 1 -maxdepth 1 -type d | xargs cp -frp -t ../../
+	$ cp -frp ../../out/lang/* ../../out/
 
 3. ADMIN/BACKEND Settings
 
@@ -48,11 +57,18 @@ None.
 - If not already done, sign up for a (free) Website Payments Standard business account.
 - My Account>Profile>Instant Payment Notification Preferences: Enable IPN messages AND set URL to http://www.yourwebsite.com/index.php?cl=v6c_hPayPalIpn&v6c_gateway=paypal
 NVP:
-1. (My) Profile > My Selling Tools > Selling online > API access > select update link
-2. Select "Request API credentials" (Option 2)
-3. Select "Request API signature" then hit Agree and Submit button
-4. Copy information (Username, Password, Signature) to appropriate fields under Admin > 6vC Modules > Merchant Links
+i.   (My) Profile > My Selling Tools > Selling online > API access > select update link
+ii.	 Select "Request API credentials" (Option 2)
+iii. Select "Request API signature" then hit Agree and Submit button
+iv.  Copy information (Username, Password, Signature) to appropriate fields under Admin > 6vC Modules > Merchant Links
 
+5. Custom Templates/Themes
+
+To use with a custom theme, simply update the following files to match you changes:
+	- modules/v6c_merchantlink/out/azure/tpl/custom/v6c_redirectpost.tpl
+	- modules/v6c_merchantlink/out/blocks/v6c_ml_checkout_thankyou_info.tpl
+If the 'checkout_thankyou_info' block doesn't in your page/checkout/thankyou.tpl file, you'll want to merge in
+the code from v6c_ml_checkout_thankyou_info.tpl.
 
 -------------------------------------------------------------------------------------------------
 TODO

@@ -85,7 +85,8 @@ class v6c_ctrl_mlPayment extends v6c_ctrl_mlPayment_parent
             $oPayment->load( $sPaymentId );
             if ($oPayment->v6cIsLinkedGateway())
             {
-                /* WIP: Uncomment when ready to support saved payment authorizations
+                /* TODO
+                 * WIP: Uncomment when ready to support saved payment authorizations
                 $bUsePrevInfo = oxConfig::getParameter( 'v6c_lnkpaydone' ) == 'true' ? true : false;
                 // Redirect to merchant gateway if previously submitted info is not available and user does not want to re-enter
                 if (!$this->v6cHaveLnkPayInfo() || !$bUsePrevInfo)

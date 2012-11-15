@@ -44,17 +44,6 @@
 
         <tr class="conftext[{cycle}]">
          <td valign="middle">
-            <input type=hidden name=confbools[v6c_blHideSinglePay] value=false>
-            <input type=checkbox name=confbools[v6c_blHideSinglePay] value=true  [{if ($confbools.v6c_blHideSinglePay)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="V6C_HELP_HIDESNGLPAY" }]
-         </td>
-         <td valign="middle" width="100%">
-          [{ oxmultilang ident="V6C_HIDESNGLPAY" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
 			<textarea class="txtfield" name=confaarrs[v6c_aPayPalLangMap] [{ $readonly }]>[{$confaarrs.v6c_aPayPalLangMap}]</textarea>
 			[{ oxinputhelp ident="V6C_HELP_PAYPALLANGMAP" }]
          </td>
@@ -82,18 +71,6 @@
             [{ oxmultilang ident="V6C_PAYPALID" }]
          </td>
         </tr>
-
-        [{* Probably best to not give user access to this...
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalNvpVer] value="[{$confstrs.v6c_sPayPalNvpVer}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALNVPVER" }]
-         </td>
-         <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALNVPVER" }]
-         </td>
-        </tr>
-        *}]
 
         <tr class="conftext[{cycle}]">
          <td valign="middle">
@@ -125,18 +102,6 @@
          </td>
         </tr>
 
-		[{*
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalPdtTkn] value="[{$confstrs.v6c_sPayPalPdtTkn}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALPDTTKN" }]
-         </td>
-         <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALPDTTKN" }]
-         </td>
-        </tr>
-        *}]
-
         <tr class="conftext[{cycle}]">
          <td valign="middle">
             <input type=hidden name=confbools[v6c_blPayPalSslPdt] value=false>
@@ -159,108 +124,36 @@
          </td>
         </tr>
 
-		[{*
         <tr class="conftext[{cycle}]">
          <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalTstEmail] value="[{$confstrs.v6c_sPayPalTstEmail}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALTSTEMAIL" }]
+			<input type=text class="txt" name=confstrs[v6c_sPpSbNvpUsr] value="[{$confstrs.v6c_sPpSbNvpUsr}]" [{ $readonly}]>
+			[{ oxinputhelp ident="V6C_HELP_PAYPALSBNVPUSR" }]
          </td>
          <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALTSTEMAIL" }]
+            [{ oxmultilang ident="V6C_PAYPALSBNVPUSR" }]
          </td>
         </tr>
 
         <tr class="conftext[{cycle}]">
          <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalTstId] value="[{$confstrs.v6c_sPayPalTstId}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALTSTID" }]
+			<input type=text class="txt" name=confstrs[v6c_sPpSbNvpPwd] value="[{$confstrs.v6c_sPpSbNvpPwd}]" [{ $readonly}]>
+			[{ oxinputhelp ident="V6C_HELP_PAYPALSBNVPPWD" }]
          </td>
          <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALTSTID" }]
+            [{ oxmultilang ident="V6C_PAYPALSBNVPPWD" }]
          </td>
         </tr>
 
         <tr class="conftext[{cycle}]">
          <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalTstPdtTkn] value="[{$confstrs.v6c_sPayPalTstPdtTkn}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALTSTPDTTKN" }]
+			<input type=text class="txt" name=confstrs[v6c_sPpSbNvpSig] value="[{$confstrs.v6c_sPpSbNvpSig}]" [{ $readonly}]>
+			[{ oxinputhelp ident="V6C_HELP_PAYPALSBNVPSIG" }]
          </td>
          <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALTSTPDTTKN" }]
+            [{ oxmultilang ident="V6C_PAYPALSBNVPSIG" }]
          </td>
         </tr>
 
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-			<input type=text class="txt" name=confstrs[v6c_sPayPalCountryCode] value="[{$confstrs.v6c_sPayPalCountryCode}]" [{ $readonly}]>
-			[{ oxinputhelp ident="V6C_HELP_PAYPALLOCAL" }]
-         </td>
-         <td valign="middle" width="100%" >
-            [{ oxmultilang ident="V6C_PAYPALLOCAL" }]
-         </td>
-        </tr>
-        *}]
-[{*
-        <tr class="conftext[{cycle}]">
-         <td valign="middle" class="nowrap">
-           <select class="confinput" name=confstrs[iTBD] [{ $readonly }]>
-             <option value="0" [{ if $confstrs.iTBD == 0}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-             <option value="1" [{ if $confstrs.iTBD == 1}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-             <option value="2" [{ if $confstrs.iTBD == 2}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-           </select>
-           [{ oxinputhelp ident="HELP_TBD" }]
-         </td>
-         <td valign="middle" width="100%">
-              [{ oxmultilang ident="TBD" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-           <select class="confinput" name=confstrs[iTBD] [{ $readonly }]>
-             <option value="0" [{ if $confstrs.iTBD == 0}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-             <option value="1" [{ if $confstrs.iTBD == 1}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-             <option value="2" [{ if $confstrs.iTBD == 2}]SELECTED[{/if}]>[{ oxmultilang ident="TBD" }]</option>
-           </select>
-           [{ oxinputhelp ident="HELP_TBD" }]
-         </td>
-         <td valign="middle" width="100%">
-              [{ oxmultilang ident="TBD" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-            <input type=hidden name=confbools[blTBD] value=false>
-            <input type=checkbox name=confbools[blTBD] value=true  [{if ($confbools.blTBD)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_TBD" }]
-         </td>
-         <td valign="middle" width="100%">
-          [{ oxmultilang ident="TBD" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-            <input type=hidden name=confbools[blTBD] value=false>
-            <input type=checkbox class="confinput" name=confbools[blTBD] value=true  [{if ($confbools.blTBD)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_TBD" }]
-         </td>
-         <td valign="middle" width="100%" >
-           [{ oxmultilang ident="TBD" }]
-         </td>
-        </tr>
-
-        <tr class="conftext[{cycle}]">
-         <td valign="middle">
-            <input type=hidden name=confbools[blTBD] value=false>
-            <input type=checkbox class="confinput" name=confbools[blTBD] value=true  [{if ($confbools.blTBD)}]checked[{/if}] [{ $readonly }]>
-            [{ oxinputhelp ident="HELP_TBD" }]
-         </td>
-         <td valign="middle" width="100%" >
-           [{ oxmultilang ident="TBD" }]
-         </td>
-*}]
 		<!-- Forcing width of first column -->
         <tr>
          <td valign="middle" class="nowrap">

@@ -35,6 +35,13 @@
  */
 class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 {
+    /*TODO: Secure paypal key parameter:
+    * 	- Add private key-seed to this class
+    * 	- On install, change key-seed random value (file_ get_ contents -> preg_match -> file_ put_ contents)
+    * 	- Encode/decode key using key-seed when updated in backend (override shop_config::save & instantiate this class)
+    * 	- Encode/decode here as well
+    */
+
 	/////////////////////// OVERRIDES ////////////////////////////
 
 
@@ -52,99 +59,19 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
     {
         $bRes = parent::executePayment($dAmount, $oOrder);
 
-        // Thanks to extension v6c_ctrl_mlOrder::_executePayment, basket will be available with this call
-        // Otherwise basket would only be available after a call to oxOrder::_sendOrderByEmail
-        // TODO: Uncomment this line, update ctrl_mlorder and ctrl_mlpayment to head revision, and add support
-        // for calculation costs and creating DESC field in the same way as done when setting up paypalexpress
-        //$oBasket = $oOrder->getBasket();
-
-        // TODO: chenge this to a if method_exists call _v6c_paypalxpr_executePayment
-        // Check for PayPal Express payment
+        // Check for extended payment processing in the form of a function named _[pay_ext]_executePayment(..)
         $oPayment = oxNew('oxPayment');
-        if ($oPayment->load($this->_oPaymentInfo->oxuserpayments__oxpaymentsid->value) && strcmp($oPayment->oxpayments__v6link->value, 'v6c_paypalxpr') == 0)
+        if ( $oPayment->load($this->_oPaymentInfo->oxuserpayments__oxpaymentsid->value) && method_exists($this, '_'.$oPayment->oxpayments__v6link->value.'_executePayment') )
         {
-            $bRes = true;
-            $this->_blActive = true;
-            // Make sure token is available
-            $sToken = oxSession::getVar('v6c_sPaypalXprTkn');
-            if (!isset($sToken))
-            {
-                $this->_iLastErrorNo = __LINE__;
-                $this->_sLastError = 'Paypal NVP token not available.';
-                $bRes = false;
-            }
-
-            if ($bRes)
-            {
-                // Server info
-                $sServer = $this->_v6cIsTestMode() ? self::V6C_ML_PAYPAL_NVP_TSTSVR : self::V6C_ML_PAYPAL_NVP_SVR;
-                $sScript = self::V6C_ML_PAYPAL_NVP_ADR;
-                // Generate GetExpressCheckoutDetails request
-                $sNvpVer = self::V6C_ML_PAYPAL_NVP_VER; //$this->getConfig()->getConfigParam('v6c_sPayPalNvpVer');
-                $sBaseRequest = 'VERSION='.urlencode( number_format( doubleval($sNvpVer),1 ) );
-                $sBaseRequest .= '&PWD='.urlencode($this->getConfig()->getConfigParam('v6c_sPayPalNvpPwd')).'&USER='.urlencode($this->getConfig()->getConfigParam('v6c_sPayPalNvpUsr'));
-                $sBaseRequest .= '&SIGNATURE='.urlencode($this->getConfig()->getConfigParam('v6c_sPayPalNvpSig')).'&TOKEN='.urlencode($sToken);
-                $sRequest = $sBaseRequest.'&METHOD=GetExpressCheckoutDetails';
-                // Make request and verify response
-                $aResponse = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
-                if ($aResponse === false || !array_key_exists('ACK', $aResponse) || strcasecmp($aResponse['ACK'], 'Success') != 0)
-                {
-                    $this->_iLastErrorNo = __LINE__;
-                    $this->_sLastError = 'Paypal response to GetExpressCheckoutDetails was unsuccessful.';
-                    $bRes = false;
-                } elseif (!isset($aResponse['TOKEN']) || strcmp($aResponse['TOKEN'], $sToken) != 0)
-                {
-                    $this->_iLastErrorNo = __LINE__;
-                    $this->_sLastError = 'Paypal response token from GetExpressCheckoutDetails doesn\'t match session value.';
-                    $bRes = false;
-                } elseif ( (!isset($aResponse['PAYERID']) && $this->_v6c_paypalxpr_GetPayerId() == null) || !isset($aResponse['AMT']) || !isset($aResponse['CURRENCYCODE']) )
-                // PayerID can come from query string or array
-                {
-                    $this->_iLastErrorNo = __LINE__;
-                    $this->_sLastError = 'Paypal response from GetExpressCheckoutDetails missing values required to complete transaction.';
-                    $bRes = false;
-                }
-            }
-
-            // Complete immediate/up-front payments with DoExpressCheckoutPayment.  Not applicable if only services are being chekced out.
-            if ($bRes && $aResponse['AMT'] > 0 )
-            {
-                // Prep request string
-                $sPayerId = isset($aResponse['PAYERID']) ? $aResponse['PAYERID'] : $this->_v6c_paypalxpr_GetPayerId();
-                $sRequest = $sBaseRequest.'&METHOD=DoExpressCheckoutPayment';
-                $sRequest .= '&PAYERID='.urlencode($sPayerId).'&PAYMENTACTION=Sale';
-                $sRequest .= '&AMT='.$aResponse['AMT'].'&CURRENCYCODE='.$aResponse['CURRENCYCODE'];
-                // Make call and verify response
-                $aResponse = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
-                if ($aResponse === false || !array_key_exists('ACK', $aResponse) || strcasecmp($aResponse['ACK'], 'Success') != 0)
-                {
-                    $this->_iLastErrorNo = __LINE__;
-                    $this->_sLastError = 'Paypal response to DoExpressCheckoutPayment was unsuccessful.';
-                    $bRes = false;
-                } elseif (!isset($aResponse['TOKEN']) || strcmp($aResponse['TOKEN'], $sToken) != 0)
-                {
-                    $this->_iLastErrorNo = __LINE__;
-                    $this->_sLastError = 'Paypal response token from DoExpressCheckoutPayment doesn\'t match session value.';
-                    $bRes = false;
-                } else {
-                    $this->_aGatewayParms = $aResponse;
-                }
-            }
-
-            // Provide function for extensions
-            if ($bRes && method_exists($this, '_v6cExecPayExt_End')) $this->_v6cExecPayExt_End($sBaseRequest);
-
-            //TODO:
-            //    Prevent > 10 services from basket
-
-            $this->_blActive = false;
+            $sMethod = '_'.$oPayment->oxpayments__v6link->value.'_executePayment';
+            $bRes = $this->$sMethod($dAmount, $oOrder);
         }
 
         return $bRes;
     }
 
     /**
-    * Sets _iGatewayType value otherwise set via self::confirmPayment
+    * Sets _iGatewayType value otherwise set via self::v6cValidateNotification
     * for other payment types.
     *
     * @param object $oUserpayment User payment object
@@ -199,7 +126,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
     const V6C_ML_PAYPAL_IPN = 1;
 
     /**
-    * PayPal IPN
+    * PayPal NVP
     * @var int
     */
     const V6C_ML_PAYPAL_NVP = 2;
@@ -235,24 +162,20 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
     protected $_v6c_bTestMode = null;
 
     /**
-     * Confirm payment.  Returns confirmed data.
+     * Confirm payment.  On success data is entered into _aGatewayParms and _aCustomParms.
      *
      * @param int $TYPE payment type
      *
      * @return null
      */
-    //TODO: add prefix
-    public function confirmPayment($TYPE)
+    public function v6cValidateNotification($TYPE)
     {
     	$this->_iGatewayType = $TYPE;
 
     	switch ($TYPE)
     	{
-    		case self::V6C_ML_PAYPAL_PDT:
-    			$this->_v6cProcessPayPalOrderPdt();
-    			break;
     		case self::V6C_ML_PAYPAL_IPN:
-    			$this->_v6cProcessPayPalOrderIpn();
+    			$this->_v6cProcessPayPalIpn();
     			break;
     		default:
     			break;
@@ -264,8 +187,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
      *
      * @return array
      */
-    //TODO: add prefix
-    public function getCustomParms()
+    public function v6cGetCustomParms()
     {
     	return $this->_aCustomParms;
     }
@@ -275,8 +197,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
      *
      * @return array
      */
-    //TODO: add prefix
-    public function getGatewayParms()
+    public function v6cGetGatewayParms()
     {
     	return $this->_aGatewayParms;
     }
@@ -286,8 +207,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
      *
      * @return string|null
      */
-    //TODO: add prefix
-    public function getGatewayOrderId()
+    public function v6cGetGatewayOrderId()
     {
     	$sOrderNr = null;
 
@@ -315,8 +235,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
      *
      * @return double|null
      */
-    //TODO: add prefix
-    public function getGatewayOrderAmount()
+    public function v6cGetGatewayOrderAmount()
     {
     	$dOrderNr = null;
 
@@ -344,8 +263,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
     *
     * @return string|null
     */
-    //TODO: add prefix
-    public function getGatewayPaymentStatus()
+    public function v6cGetGatewayPaymentStatus()
     {
         if (isset($this->_aGatewayParms))
         {
@@ -384,13 +302,12 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $sServer = $this->_v6cIsTestMode() ? self::V6C_ML_PAYPAL_NVP_TSTSVR : self::V6C_ML_PAYPAL_NVP_SVR;
             $sScript = self::V6C_ML_PAYPAL_NVP_ADR;
             // Generate general request string
-            $sNvpVer = self::V6C_ML_PAYPAL_NVP_VER; //$this->getConfig()->getConfigParam('v6c_sPayPalNvpVer');
             $aQuery = array();
             $aQuery['METHOD'] = 'SetExpressCheckout';
-            $aQuery['VERSION'] = number_format( doubleval($sNvpVer),1 );
-            $aQuery['PWD'] = $this->getConfig()->getConfigParam('v6c_sPayPalNvpPwd');
-            $aQuery['USER'] = $this->getConfig()->getConfigParam('v6c_sPayPalNvpUsr');
-            $aQuery['SIGNATURE'] = $this->getConfig()->getConfigParam('v6c_sPayPalNvpSig');
+            $aQuery['VERSION'] = number_format( doubleval(self::V6C_ML_PAYPAL_NVP_VER),1 );
+            $aQuery['PWD'] = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpPwd') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpPwd');
+            $aQuery['USER'] = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpUsr') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpUsr');
+            $aQuery['SIGNATURE'] = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpSig') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpSig');
             $aQuery['PAYMENTACTION'] = 'Sale';
             $aQuery['RETURNURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=order';
             $aQuery['CANCELURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=v6c_redirectpost&fnc=v6cLinkedPayCancel';
@@ -472,9 +389,6 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 
         switch ($oPayment->oxpayments__v6link->value)
         {
-            case 'v6c_paypalstd':
-                $sUrl = $this->_v6cIsTestMode() ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
-                break;
             case 'v6c_paypalxpr':
                 if (array_key_exists('TOKEN', $this->_aGatewayParms))
                 {
@@ -491,100 +405,12 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
         return $sUrl;
     }
 
-	/**
-     * Process order data from PayPal gateway and return retrieved data.
-     *
-     * @return null
-     */
-	protected function _v6cProcessPayPalOrderPdt()
-	{
-		$sErr = null;
-
-    	// read the post from PayPal system and add 'cmd'
-		$req = 'cmd=_notify-synch';
-
-		$tx_token = $_GET['tx'];
-		$auth_token = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPayPalTstPdtTkn') : $this->getConfig()->getConfigParam('v6c_sPayPalPdtTkn');
-		$req .= "&tx=$tx_token&at=$auth_token";
-
-	    // post back to PayPal system to validate
-		$header = "POST /cgi-bin/webscr HTTP/1.0\r\n";
-		$header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-		$header .= "Content-Length: " . strlen($req) . "\r\n\r\n";
-		$domain = $this->_v6cIsTestMode() ? 'www.sandbox.paypal.com' : 'www.paypal.com';
-		// If possible, securely post back to paypal using HTTPS
-		// Your PHP server will need to be SSL enabled
-		if ($this->getConfig()->getConfigParam('v6c_blPayPalSslPdt'))
-		{ $fp = fsockopen ('ssl://'.$domain, 443, $errno, $errstr, 30); }
-		else
-		{ $fp = fsockopen ($domain, 80, $errno, $errstr, 30); }
-
-		if (!$fp)
-		{
-			// HTTP ERROR
-			$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_NOCONNECT');
-		} else {
-			fputs ($fp, $header . $req);
-			// read the body data
-			$res = '';
-			$headerdone = false;
-			while (!feof($fp))
-			{
-				$line = fgets ($fp, 1024);
-				if (strcmp($line, "\r\n") == 0)
-				{
-					// read the header
-					$headerdone = true;
-				}
-				else if ($headerdone)
-				{
-					// header has been read. now read the contents
-					$res .= $line;
-				}
-			}
-
-			// parse the data
-			$lines = explode("\n", $res);
-			$keyarray = array();
-			if (strcmp ($lines[0], "SUCCESS") == 0)
-			{
-				for ($i=1; $i<count($lines);$i++)
-				{
-					list($key,$val) = explode("=", $lines[$i]);
-					$keyarray[urldecode($key)] = urldecode($val);
-				}
-				$dummyvar = null;
-
-				$sErr = $this->_v6cValidatePaypalData($keyarray);
-			}
-			else if (strcmp ($lines[0], "FAIL") == 0)
-			{
-				//TODO: get error msg/code that may follow after the FAIL line
-				$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_PDTFAIL');
-			}
-			//TODO: change error msg
-			else $sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_PDTFAIL');
-			fclose ($fp);
-		}
-
-		if ($sErr == null)
-		{
-			// All checks passed so init some vars
-			$this->_aCustomParms = unserialize(stripslashes(htmlspecialchars_decode($keyarray['custom'])));
-			$this->_aGatewayParms = $keyarray;
-			if (oxLang::getInstance()->getBaseLanguage() != $this->_aCustomParms['lang'])
-				$this->_v6cChangeShopLang($this->_aCustomParms['lang']);
-		} else {
-			throw new Exception($sErr);
-		}
-	}
-
     /**
-     * Process order data from PayPal gateway using IPN
+     * Process IPN data from PayPal
      *
      * @return mixed
      */
-	protected function _v6cProcessPayPalOrderIpn()
+	protected function _v6cProcessPayPalIpn()
 	{
 		$sErr = null;
 
@@ -612,7 +438,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 		if (!$fp)
 		{
 			// HTTP ERROR
-			$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_NOCONNECT');
+			$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_NOCONNECT');
 		} else {
 			fputs ($fp, $header . $req);
 			while (!feof($fp))
@@ -624,10 +450,9 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 				}
 				else if (strcmp ($res, "INVALID") == 0)
 				{
-					$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_IPNINVALID');
+					$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_IPNINVALID');
 				}
-				//TODO: change error msg
-				else $sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_IPNINVALID');
+				else $sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_IPNINVALID');
 			}
 			fclose ($fp);
 		}
@@ -672,22 +497,22 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 			array_key_exists('receiver_email', $aData)
 			)
 		{
-			// Only process completed cart payments
+			// Only process completed express checkout payments
 			if ( (strcmp(strtolower($aData['payment_status']), 'completed') == 0 || strcmp(strtolower($aData['payment_status']), 'pending')) &&
 				strcmp(strtolower($aData['txn_type']), 'express_checkout') == 0 )
 			{
 				$sEmail = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPayPalTstEmail') : $this->getConfig()->getConfigParam('v6c_sPayPalEmail');
 				if ( strcmp(strtolower($aData['receiver_email']), strtolower($sEmail)) != 0 )
-					$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_BADID');
+					$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_BADID');
 			}
 			else
 			{
-			$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_UNKWNRQ');
+			$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_UNKWNRQ');
 			}
 		}
 		else
 		{
-			$sErr = oxLang::getInstance()->translateString('V6C_PAYPAL_MISSINGPARMS');
+			$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_MISSINGPARMS');
 		}
 
 		return $sErr;
@@ -696,7 +521,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	/**
      * Variable (config parm) getter
      *
-     * @return mixed
+     * @return bool
      */
 	protected function _v6cIsTestMode()
 	{
@@ -710,8 +535,6 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
      * not take affect!
      *
      * @param int $iLang Lang number
-     *
-     * @return mixed
      */
 	protected function _v6cChangeShopLang($iLang)
 	{
@@ -891,5 +714,105 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	protected function _v6c_paypalxpr_GetPayerId()
 	{
 	    return oxSession::getVar('v6cPaypalxprPayerId');
+	}
+
+	/**
+	* Execute PayPal Express Checkout payment.
+	*
+	* @param double $dAmount Goods amount
+	* @param object &$oOrder User ordering object
+	*
+	* @return bool
+	*/
+	public function _v6c_paypalxpr_executePayment( $dAmount, & $oOrder )
+	{
+	    // TODO:
+	    // WIP: Uncomment below code when ready to support saved payment authorizations
+
+	    // Thanks to extension v6c_ctrl_mlOrder::_executePayment, basket will be available with this call
+	    // Otherwise basket would only be available after a call to oxOrder::_sendOrderByEmail
+	    //$oBasket = $oOrder->getBasket();
+
+	    $bRes = true;
+	    $this->_blActive = true;
+	    // Make sure token is available
+	    $sToken = oxSession::getVar('v6c_sPaypalXprTkn');
+	    if (!isset($sToken))
+	    {
+	        $this->_iLastErrorNo = __LINE__;
+	        $this->_sLastError = 'Paypal NVP token not available.';
+	        $bRes = false;
+	    }
+
+	    //TODO: Generate query using array (see $this->v6cInitPayment)
+	    if ($bRes)
+	    {
+	        // Server info
+	        $sServer = $this->_v6cIsTestMode() ? self::V6C_ML_PAYPAL_NVP_TSTSVR : self::V6C_ML_PAYPAL_NVP_SVR;
+	        $sScript = self::V6C_ML_PAYPAL_NVP_ADR;
+	        // Generate GetExpressCheckoutDetails request
+	        $sNvpVer = self::V6C_ML_PAYPAL_NVP_VER;
+	        $sNvpPwd = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpPwd') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpPwd');
+	        $sNvpUsr = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpUsr') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpUsr');
+	        $sNvpSig = $this->_v6cIsTestMode() ? $this->getConfig()->getConfigParam('v6c_sPpSbNvpSig') : $this->getConfig()->getConfigParam('v6c_sPayPalNvpSig');
+	        $sBaseRequest = 'VERSION='.urlencode( number_format( doubleval($sNvpVer),1 ) );
+	        $sBaseRequest .= '&PWD='.urlencode($sNvpPwd).'&USER='.urlencode($sNvpUsr);
+	        $sBaseRequest .= '&SIGNATURE='.urlencode($sNvpSig).'&TOKEN='.urlencode($sToken);
+	        $sRequest = $sBaseRequest.'&METHOD=GetExpressCheckoutDetails';
+	        // Make request and verify response
+	        $aResponse = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
+	        if ($aResponse === false || !array_key_exists('ACK', $aResponse) || strcasecmp($aResponse['ACK'], 'Success') != 0)
+	        {
+	            $this->_iLastErrorNo = __LINE__;
+	            $this->_sLastError = 'Paypal response to GetExpressCheckoutDetails was unsuccessful.';
+	            $bRes = false;
+	        } elseif (!isset($aResponse['TOKEN']) || strcmp($aResponse['TOKEN'], $sToken) != 0)
+	        {
+	            $this->_iLastErrorNo = __LINE__;
+	            $this->_sLastError = 'Paypal response token from GetExpressCheckoutDetails doesn\'t match session value.';
+	            $bRes = false;
+	        } elseif ( (!isset($aResponse['PAYERID']) && $this->_v6c_paypalxpr_GetPayerId() == null) || !isset($aResponse['AMT']) || !isset($aResponse['CURRENCYCODE']) )
+	        // PayerID can come from query string or array
+	        {
+	            $this->_iLastErrorNo = __LINE__;
+	            $this->_sLastError = 'Paypal response from GetExpressCheckoutDetails missing values required to complete transaction.';
+	            $bRes = false;
+	        }
+	    }
+
+	    // Complete immediate/up-front payments with DoExpressCheckoutPayment.  Not applicable if only services are being chekced out.
+	    if ($bRes && $aResponse['AMT'] > 0 )
+	    {
+	        // Prep request string
+	        $sPayerId = isset($aResponse['PAYERID']) ? $aResponse['PAYERID'] : $this->_v6c_paypalxpr_GetPayerId();
+	        $sRequest = $sBaseRequest.'&METHOD=DoExpressCheckoutPayment';
+	        $sRequest .= '&PAYERID='.urlencode($sPayerId).'&PAYMENTACTION=Sale';
+	        $sRequest .= '&AMT='.$aResponse['AMT'].'&CURRENCYCODE='.$aResponse['CURRENCYCODE'];
+	        // Make call and verify response
+	        $aResponse = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
+	        if ($aResponse === false || !array_key_exists('ACK', $aResponse) || strcasecmp($aResponse['ACK'], 'Success') != 0)
+	        {
+	            $this->_iLastErrorNo = __LINE__;
+	            $this->_sLastError = 'Paypal response to DoExpressCheckoutPayment was unsuccessful.';
+	            $bRes = false;
+	        } elseif (!isset($aResponse['TOKEN']) || strcmp($aResponse['TOKEN'], $sToken) != 0)
+	        {
+	            $this->_iLastErrorNo = __LINE__;
+	            $this->_sLastError = 'Paypal response token from DoExpressCheckoutPayment doesn\'t match session value.';
+	            $bRes = false;
+	        } else {
+	            $this->_aGatewayParms = $aResponse;
+	        }
+	    }
+
+	    // Provide function for extensions
+	    if ($bRes && method_exists($this, '_v6cExecPayExt_End')) $this->_v6cExecPayExt_End($sBaseRequest);
+
+	    //TODO:
+	    //    Prevent > 10 services from basket
+
+	    $this->_blActive = false;
+
+	    return $bRes;
 	}
 }
