@@ -431,19 +431,19 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 		// If possible, securely post back to paypal using HTTPS
 		// Your PHP server will need to be SSL enabled
 		if ($this->getConfig()->getConfigParam('v6c_blPayPalSslPdt'))
-		{ $fp = fsockopen ('ssl://'.$domain, 443, $errno, $errstr, 30); }
+		{ $hFsock = fsockopen ('ssl://'.$domain, 443, $errno, $errstr, 30); }
 		else
-		{ $fp = fsockopen ($domain, 80, $errno, $errstr, 30); }
+		{ $hFsock = fsockopen ($domain, 80, $errno, $errstr, 30); }
 
-		if (!$fp)
+		if (!$hFsock)
 		{
 			// HTTP ERROR
 			$sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_NOCONNECT');
 		} else {
-			fputs ($fp, $header . $req);
-			while (!feof($fp))
+			fputs ($hFsock, $header . $req);
+			while (!feof($hFsock))
 			{
-				$res = fgets ($fp, 1024);
+				$res = fgets ($hFsock, 1024);
 				if (strcmp ($res, "VERIFIED") == 0)
 				{
 					$sErr = $this->_v6cValidatePaypalData($_POST);
@@ -454,7 +454,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 				}
 				else $sErr = __CLASS__."::".__FUNCTION__." (ln ".__LINE__."): " . oxLang::getInstance()->translateString('V6C_PAYPAL_IPNINVALID');
 			}
-			fclose ($fp);
+			fclose ($hFsock);
 		}
 
 		if ($sErr == null)
@@ -564,9 +564,9 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 
 	    if (function_exists('curl_exec'))
 	    {
-	        $sResponse = $this->_v6cConnectByCURL($sServer.$sScript, $sRequest);
+	        $sResponse = $this->_v6cCurlRequest($sServer.$sScript, $sRequest);
 	    } else {
-	        $sResponse = $this->_v6cConnectByFSOCK($sServer, $sScript, $sRequest);
+	        $sResponse = $this->_v6cFsockRequest($sServer, $sScript, $sRequest);
 	    }
 	    if ($sResponse !== false)
 	    {
@@ -591,107 +591,107 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	/**
 	* Send request to URL using cURL.
 	*
-	* @param string $url URL
-	* @param string $body Request content
+	* @param string $sUrl URL
+	* @param string $sBody Request content
 	*
 	* @return string|false
 	*/
-	protected function _v6cConnectByCURL($url, $body)
+	protected function _v6cCurlRequest($sUrl, $sBody)
 	{
-	    $ch = @curl_init();
-	    if (!$ch)
+	    $hCurl = @curl_init();
+	    if (!$hCurl)
 	    {
-	        oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express connect failed with cURL method');
-	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\.".__CLASS__.".::".__FUNCTION__." (ln ".__LINE__.")\nConnect failed at CURL init\n\n", 'v6c_log.txt');
+	        oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express Error: cURL request connection failed');
+	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\.".__CLASS__.".::".__FUNCTION__." (ln ".__LINE__.")\ncURL request connection failed to init\n\n", 'v6c_log.txt');
 	    }
 	    else
 	    {
 	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 )
 	        {
-	            $sLog = "[".date('Y-m-d\TH:i:sP')."]\nv6c_mlPaymentGateway::".__FUNCTION__." (ln ".__LINE__.")\nConnect with cURL method successful\nRequest:\n";
-	            $sLog .= $body."\n\n";
+	            $sLog = "[".date('Y-m-d\TH:i:sP')."]\nv6c_mlPaymentGateway::".__FUNCTION__." (ln ".__LINE__.")\ncURL request connection successful\nRequest:\n";
+	            $sLog .= $sBody."\n\n";
 	            oxUtils::getInstance()->writeToLog($sLog, 'v6c_log.txt');
 	        }
-	        @curl_setopt($ch, CURLOPT_URL, 'https://'.$url);
-	        @curl_setopt($ch, CURLOPT_POST, true);
-	        @curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-	        @curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	        @curl_setopt($ch, CURLOPT_HEADER, false);
-	        @curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-	        @curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	        @curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	        @curl_setopt($ch, CURLOPT_VERBOSE, true);
-	        $result = @curl_exec($ch);
-	        if (!$result)
+	        @curl_setopt($hCurl, CURLOPT_TIMEOUT, 30);
+	        @curl_setopt($hCurl, CURLOPT_URL, 'https://'.$sUrl);
+	        @curl_setopt($hCurl, CURLOPT_POST, true);
+	        @curl_setopt($hCurl, CURLOPT_POSTFIELDS, $sBody);
+	        @curl_setopt($hCurl, CURLOPT_HEADER, false);
+	        @curl_setopt($hCurl, CURLOPT_RETURNTRANSFER, true);
+	        @curl_setopt($hCurl, CURLOPT_SSL_VERIFYPEER, false);
+	        @curl_setopt($hCurl, CURLOPT_SSL_VERIFYHOST, false);
+	        @curl_setopt($hCurl, CURLOPT_VERBOSE, true);
+	        $bResult = @curl_exec($hCurl);
+	        if (!$bResult)
 	        {
-	            oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express send failed with cURL. Error: ' . curl_error($ch));
-	            if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nRequest with CURL failed! Error: ".curl_error($ch)."\n\n", 'v6c_log.txt');
+	            oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express: cURL request returned bad result. Error: ' . curl_error($hCurl));
+	            if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\ncURL request returned bad result! Error: ".curl_error($hCurl)."\n\n", 'v6c_log.txt');
 	        }
-	        elseif ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nRequest with CURL successful\n\n", 'v6c_log.txt');
-	        @curl_close($ch);
+	        elseif ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\ncURL request returned good result\n\n", 'v6c_log.txt');
+	        @curl_close($hCurl);
 	    }
-	    return (isset($result) ? $result : false);
+	    return (isset($bResult) ? $bResult : false);
 	}
 
 	/**
 	* Send request to URL using fsock.
 	*
-	* @param string $host Domain portion or request URL
-	* @param string $script Address/query portion or request URL
-	* @param string $body Request content
+	* @param string $sHost Domain portion or request URL
+	* @param string $sPath Request-URI (absolute path and query)
+	* @param string $sBody Request content
 	*
 	* @return string|false
 	*/
-	protected function _v6cConnectByFSOCK($host, $script, $body)
+	protected function _v6cFsockRequest($sHost, $sPath, $sBody)
 	{
-	    $fp = @fsockopen('ssl://'.$host, 443, $errno, $errstr, 4);
-	    if (!$fp)
+	    $hFsock = @fsockopen('ssl://'.$sHost, 443, $errno, $errstr, 4);
+	    if (!$hFsock)
 	    {
-	        oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express connect failed at fsockopen init');
-	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nConnect failed with fsockopen\n\n", 'v6c_log.txt');
+	        oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express Error: fsockopen request connection failed');
+	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nfsockopen request connection failed\n\n", 'v6c_log.txt');
 	    }
 	    else
 	    {
-	        $header = $this->_v6cMakeHeader($host, $script, strlen($body));
-	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nConnect with fsockopen successful\nRequest:\n".$header.$body."\n\n", 'v6c_log.txt');
-	        @fputs($fp, $header.$body);
-	        $tmp = '';
+	        $sHeader = $this->_v6cGenerateHeader($sHost, $sPath, strlen($sBody));
+	        if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nfsockopen request connection successful\nRequest:\n".$sHeader.$sBody."\n\n", 'v6c_log.txt');
+	        @fputs($hFsock, $sHeader.$sBody);
+	        $sTmp = '';
 	        $isHdrDone = false;
-	        while (!feof($fp))
+	        while (!feof($hFsock))
 	        {
-	            $sLn = trim(fgets($fp, 1024));
+	            $sLn = trim(fgets($hFsock, 1024));
 	            if (strlen($sLn) == 0) $isHdrDone = true;
-	            if ($isHdrDone) $tmp .= $sLn;
+	            if ($isHdrDone) $sTmp .= $sLn;
 	        }
-	        fclose($fp);
-	        $result = $tmp;
-	        if (!$result)
+	        fclose($hFsock);
+	        $bResult = $sTmp;
+	        if (!$bResult)
 	        {
-	            oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express send failed with fsockopen');
-	            if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nRequest with fsockopen failed\n\n", 'v6c_log.txt');
+	            oxUtilsView::getInstance()->addErrorToDisplay('PayPal Express Error: fsockopen request returned bad result');
+	            if ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nfsockopen request returned bad result\n\n", 'v6c_log.txt');
 	        }
-	        elseif ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nRequest with fsockopen successful\n\n", 'v6c_log.txt');
+	        elseif ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\n".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\nfsockopen request returned good result\n\n", 'v6c_log.txt');
 	    }
-	    return (isset($result) ? $result : false);
+	    return (isset($bResult) ? $bResult : false);
 	}
 
 	/**
 	* Generate header for fsock connection.
 	*
-	* @param string $host Domain portion or request URL
-	* @param string $script Address/query portion or request URL
-	* @param int $length length of body content
+	* @param string $sHost Domain portion or request URL
+	* @param string $sPath Request-URI (absolute path and query)
+	* @param int $iLength length of body content
 	*
 	* @return string
 	*/
-	protected function _v6cMakeHeader($host, $script, $length)
+	protected function _v6cGenerateHeader($sHost, $sPath, $iLength)
 	{
-	    $header =	'POST '.strval($script).' HTTP/1.0'."\r\n" .
-						'Host: '.strval($host)."\r\n".
-						'Content-Type: application/x-www-form-urlencoded'."\r\n".
-						'Content-Length: '.(int)($length)."\r\n".
-						'Connection: close'."\r\n\r\n";
-	    return $header;
+	    $sHeader = 'POST '.strval($sPath).' HTTP/1.0'."\r\n" .
+			'Host: '.strval($sHost)."\r\n".
+			'Content-Type: application/x-www-form-urlencoded'."\r\n".
+			'Content-Length: '.(int)($iLength)."\r\n".
+			'Connection: close'."\r\n\r\n";
+	    return $sHeader;
 	}
 
 	/**
