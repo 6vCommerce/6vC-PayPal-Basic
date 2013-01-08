@@ -108,12 +108,7 @@ class v6c_RedirectPost extends oxUBase
             {
                 $this->_v6cSetError(oxLang::getInstance()->translateString('V6C_PAGE_CHECKOUT_PAYMENT_ERRINIT'));
             }
-            else $aGatewayParms = $oPaymentGateway->getGatewayParms();
-        } else {
-            // Save order info
-            $oOrder = oxNew( 'oxorder' );
-            $oOrder->v6cSaveOrder();
-            $this->_aViewData['aPostData'] = $oPayment->v6cGetGatewayParms(array('v6c_orderid' => $oOrder->getId()));
+            else $aGatewayParms = $oPaymentGateway->v6cGetGatewayParms();
         }
 
         // Make sure post URL is available
@@ -125,7 +120,7 @@ class v6c_RedirectPost extends oxUBase
         $this->setShowTopBasket(false);
         $this->setShowRightBasket(false);
 
-        return 'custom/v6c_redirectpost.tpl';
+        return 'v6c_redirectpost.tpl';
     }
 
 
@@ -191,6 +186,8 @@ class v6c_RedirectPost extends oxUBase
 	}
 
 	/**
+	 * TODO: don't need this function anymore, just use v6cIsLinkedGateway() directly.
+	 *
 	 * Returns TRUE if selected payment method is an integrated linked
 	 * gateway for entering payment info only (returns to checkout).
 	 * Otherwise returns FALSE.

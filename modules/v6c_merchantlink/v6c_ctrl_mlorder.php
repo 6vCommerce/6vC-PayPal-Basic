@@ -52,7 +52,8 @@ class v6c_ctrl_mlOrder extends v6c_ctrl_mlorder_parent
         $oPayment = $this->getPayment();
         if ($oPayment->v6cIsLinkedGateway())
         {
-            /* WIP: Code to save payment authorizations
+            /* TODO
+             * WIP: Code to save payment authorizations
             // Flag integrated linked merchant gateway step as completed
             oxSession::setVar( 'v6c_bHaveLnkPayInfo', true );
             */
@@ -68,7 +69,8 @@ class v6c_ctrl_mlOrder extends v6c_ctrl_mlorder_parent
     /**
     * Make basket available to payment gateway.
     */
-    /* WIP: Code to save payment authorizations
+    /* TODO
+     * WIP: Code to save payment authorizations
     protected function _executePayment( oxBasket $oBasket, $oUserpayment )
     {
         $this->_oBasket = $oBasket;

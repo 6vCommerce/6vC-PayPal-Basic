@@ -10,14 +10,14 @@ class v6c_hPayPalIpn extends oxUBase
     public function render()
     {
 		$oPaymentGateway = oxNew( 'oxPaymentGateway' );
-		try { $oPaymentGateway->confirmPayment(v6c_mlPaymentGateway::V6C_ML_PAYPAL_IPN); }
+		try { $oPaymentGateway->v6cValidateNotification(v6c_mlPaymentGateway::V6C_ML_PAYPAL_IPN); }
 		catch (Exception $oEx)
 		{
-			oxUtils::getInstance()->writeToLog($oEx->getMessage()."\n", 'v6c_log.txt');
+			oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."] ".__CLASS__."::".__FUNCTION__." (ln ".__LINE__.")\n    ".$oEx->getMessage()."\n", 'v6c_log.txt');
 			return;
 		}
 
-		$this->_confirmOrder($oPaymentGateway);
+		$this->_processNotification($oPaymentGateway);
     }
 
     /**
@@ -27,13 +27,13 @@ class v6c_hPayPalIpn extends oxUBase
      *
      * @return null
      */
-	protected function _confirmOrder($oGateway)
+	protected function _processNotification($oGateway)
 	{
-    	$aCstParms = $oGateway->getCustomParms();
+    	$aCstParms = $oGateway->v6cGetCustomParms();
     	$oOrder = oxNew( 'oxorder' );
 
-    	// Check for orders processed (in New folder) but pending payment
-    	if ( strlen($oGateway->getGatewayOrderId()) && $oOrder->v6cLoadByMerchantId($oGateway->getGatewayOrderId()) )
+    	// Check for orders processed but pending payment to due a delayed PayPal payment method such as e-cheques or bank transfers.
+    	if ( strlen($oGateway->v6cGetGatewayOrderId()) && $oOrder->v6cLoadByMerchantId($oGateway->v6cGetGatewayOrderId()) )
     	{
     	    $oOrder->v6cSetAsPaid();
     	    // Notify admin
@@ -42,18 +42,5 @@ class v6c_hPayPalIpn extends oxUBase
     	    $sMsg = "Order #".$oOrder->oxorder__oxordernr->value." has been paid and it's status changed from 'PENDING' to 'OK'";
     	    $oxEmail->sendEmail($oShop->oxshops__oxowneremail->value, "Order #".$oOrder->oxorder__oxordernr->value." Paid", $sMsg);
     	}
-
-    	// Process incompleted orders (still in Pending folder)
-		$oOrder = oxNew( 'oxorder' );
-		if ($oOrder->load($aCstParms['v6c_orderid']))
-		{
-			try { $oOrder->v6cCompleteOrder($oGateway); }
-			catch (Exception $oEx)
-			{
-				oxUtils::getInstance()->writeToLog($oEx->getMessage()."\n", 'v6c_log.txt');
-			}
-		} else {
-			oxUtils::getInstance()->writeToLog(oxLang::getInstance()->translateString('V6C_THKYOU_NOORDER')."\n", 'v6c_log.txt');
-		}
 	}
 }

@@ -37,4 +37,7 @@ $aLang = array(
 'V6C_PAYPALNVPUSR'						=> 'PayPal API Benutzer ID.',
 'V6C_PAYPALNVPPWD'						=> 'PayPal API Passwort.',
 'V6C_PAYPALNVPSIG'						=> 'PayPal API Signatur.',
+'V6C_PAYPALSBNVPUSR'					=> 'Sandbox PayPal API Benutzer ID.',
+'V6C_PAYPALSBNVPPWD'					=> 'Sandbox PayPal API Passwort.',
+'V6C_PAYPALSBNVPSIG'					=> 'Sandbox PayPal API Signatur.',
 );

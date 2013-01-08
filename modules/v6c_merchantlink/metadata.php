@@ -32,7 +32,7 @@ $aModule = array(
     'title'             => '6vC MerchantLink',
     'description'       => 'Module for interfacing with merchant gateways.',
     'thumbnail'         => 'logo-sqr.png',
-    'version'           => '1.1.2',
+    'version'           => '1.1.3',
     'author'            => '6vCommerce',
     'url'		        => 'http://www.6vcommerce.ca',
     'email'				=> 'info@6vcommerce.ca',
@@ -43,7 +43,6 @@ $aModule = array(
         'oxbasket' => 'v6c_merchantlink/v6c_mlbasket',
         'oxbasketitem' => 'v6c_merchantlink/v6c_mlbasketitem',
         'oxemail' => 'v6c_merchantlink/v6c_mlemail',
-        'oxlang' => 'v6c_merchantlink/v6c_mllang',
         'oxorder' => 'v6c_merchantlink/v6c_mlorder',
         'oxpayment' => 'v6c_merchantlink/v6c_mlpayment',
         'oxpaymentgateway' => 'v6c_merchantlink/v6c_mlpaymentgateway',
@@ -63,6 +62,6 @@ $aModule = array(
     	'v6c_container.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_container.tpl',
     	'v6c_merchantlink_list.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_merchantlink_list.tpl',
     	'v6c_merchantlink_main.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_merchantlink_main.tpl',
-    	'v6c_redirectpost.tpl' => 'v6c_merchantlink/out/tpl/v6c_redirectpost.tpl',
+    	'v6c_redirectpost.tpl' => 'v6c_merchantlink/out/azure/tpl/custom/v6c_redirectpost.tpl',
     )
 );
