@@ -5,7 +5,6 @@ $sLangName  = "Deutsch";
 // -------------------------------
 $aLang = array(
     'charset'                                   => 'ISO-8859-15',
-
     // Used in templates (tpl files)
     'V6C_EMAIL_ORDER_OWNER_PAYMENTEXTRA'        => "Zusätzliche Info zum PayPal-Portal:",
     'V6C_PAGE_CHECKOUT_REDIRECT_TITLE'          => "Weiter zum sicheren PayPal-Portal",
