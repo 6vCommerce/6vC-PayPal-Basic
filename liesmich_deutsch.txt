@@ -1,0 +1,44 @@
+-------------------------------------------------------------------------------------------------
+INSTALLATION DEUTSCH - Übersetzung durch eComStyle.de
+-------------------------------------------------------------------------------------------------
+
+1. Voraussetzungen
+
+- Kompatibel mit OXID eShop 4.6 und 4.7.
+- Für Azure oder auf Azure basierende Themes. Basic Themes funktionieren nicht ohne Anpassungen!
+
+
+2. Kopiere die Dateien
+
+- Führe eine vollständige Datensicherung der Datenbank und der Shopinstallation durch. Für Datenverlust, Zahlungsausfälle oder sonstige Fehler bist Du ganz allein verantwortlich!
+
+- Kopiere den Ordner "v6c_merchantlink" in den "modules"-Ordner deines Shops. Der Transfertyp muss "binär" sein! Im Shopordner "modules" sollte dann der neue Ordner "v6c_merchantlink" zu finden sein.
+- Kopiere die Datei "functions.php" in den "modules"-Ordner deines Shops. Der Transfertyp muss "binär" sein! Die bereits vorhandene Datei "functions.php" wird duch die Neue überschrieben.
+
+
+3. ADMIN/BACKEND Einstellungen
+
+- Aktiviere das Modul "6vC MerchantLink" unter Erweiterungen > Module.
+- Leere den tmp- und ab Shopversion 4.7 den tmp/smarty-Ordner, sonst sind die folgenden Einstellungen evtl. nicht verfügbar.
+
+- Drücke den "Installation/Update"-Button unter 6vC Einstellungen > Händleranbindung > PayPal, dann den "VIEWS jetzt updaten-Button" unter Service > Tools.
+- Stammdaten > Grundeinstellungen > Einstell. > Administrationsbereich > Ordner für CMS-Seiten: Füge folgende Zeile hinzu: V6C_ORDERFOLDER_PENDING => #AAAAAA
+
+- 6vC Einstellungen > Händleranbindung > PayPal: Trage die mit dem PayPal-Konto verknüpfte Email-Adresse, die PayPal-Händler-Konto-ID, die API Benutzer ID, API Passwort und API Signatur ein (diese Daten findest Du in deinem PayPal-Geschäftskonto unter "Mein Profil").
+- 6vC Einstellungen > Händleranbindung > PayPal: Aktiviere "Führe alle Transaktionen über SSL aus" (diese Option sollte aktiviert werden, selbst wenn kein SSL vorhanden ist).
+- Das Feld "Sprache für PayPal "lc" Wert" kann in den meisten Fällen leer bleiben. Die "Sandbox"-Felder müssen nur bei Bedarf ausgefüllt bzw. aktiviert werden
+
+- Shop Einstellungen > Zahlungsarten: Aktiviere die Zahlungsmethode "Credit Card or PayPal" und konfiguriere sie (Benutzergruppen müssen zugewiesen werden!).
+- Shop Einstellungen > Versandarten: Weise im Register "Zahlungsarten" PayPal den gewünschten Versandarten zu (den Versandarten müssen Zahlungsarten zugewiesen werden!).
+
+
+4. PayPal Einstellungen
+
+- Falls noch nicht geschehen, erstelle ein kostenloses PayPal - Geschäftskonto oder upgrade dein Privatkonto kostenlos zu einem Geschäftskonto. Privatkonten funktionieren nicht fehlerfrei!
+- Mein Konto > Verkäufer/Händler > Benachrichtigungen über Sofortzahlungen: Aktiviere IPN-Benachrichtigungen UND trage folgende URL ein: http://www.yourwebsite.com/index.php?cl=v6c_hPayPalIpn&v6c_gateway=paypal
+
+
+5. Lizenz
+
+-Der Einsatz dieses Moduls erfordert eine einfache Nennung des Authors in Form eines Backlinks. Der Author hofft, dass dieser Werbewert die Zeit und Mühe rechtfertigt, die er in das Programmieren dieser frei verfügbaren Open-Source-Software investiert hat.
+-Füge folgenden Link in deine Webseite ein (zB. in die Link/Credits-Seite, die FAQ oder den Footer): <a href="http://www.6vcommerce.ca">6vCommerce: Turn-key e-commerce solutions and website services (SaaS).</a>

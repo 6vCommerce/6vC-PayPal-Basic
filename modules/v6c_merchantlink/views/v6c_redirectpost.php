@@ -117,9 +117,10 @@ class v6c_RedirectPost extends oxUBase
         else $this->_v6c_sPostUrl = $sPostUrl;
 
         // Don't show mini baskets
-        $this->setShowTopBasket(false);
-        $this->setShowRightBasket(false);
-
+        /**
+        * $this->setShowTopBasket(false);
+        * $this->setShowRightBasket(false);
+         */
         return 'v6c_redirectpost.tpl';
     }
 
