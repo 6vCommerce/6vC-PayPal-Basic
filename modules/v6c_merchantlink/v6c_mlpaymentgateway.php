@@ -25,6 +25,10 @@
 *
 * @link      http://www.6vcommerce.ca
 * @copyright (C) 6vCommerce
+*
+* Changes:
+* 13.3.2013 - Impovements & Bugfixes regarding v6cInitPayment(...) - Alexander Pick - ap@pbt-media.com
+*
 */
 
 /**
@@ -297,6 +301,8 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
         // Init for PayPal Express
         if (strcmp($oPayment->oxpayments__v6link->value, 'v6c_paypalxpr') == 0)
         {
+			$iDelCosts = $oBasket->getCosts( 'oxdelivery' )->getBruttoPrice();
+
             $res = false;
             // Server info
             $sServer = $this->_v6cIsTestMode() ? self::V6C_ML_PAYPAL_NVP_TSTSVR : self::V6C_ML_PAYPAL_NVP_SVR;
@@ -311,12 +317,13 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['PAYMENTACTION'] = 'Sale';
             $aQuery['RETURNURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=order';
             $aQuery['CANCELURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=v6c_redirectpost&fnc=v6cLinkedPayCancel';
-            $aQuery['CURRENCYCODE'] = $this->getConfig()->getActShopCurrencyObject()->name;
-            $aQuery['NOSHIPPING'] = 1;
+            $aQuery['CURRENCYCODE'] = $this->getConfig()->getActShopCurrencyObject()->name;		
+			$aQuery['NOSHIPPING'] = 1;
             $aQuery['ADDROVERRIDE'] = 0;
             $aQuery['ALLOWNOTE'] = 0;
             $aQuery['SOLUTIONTYPE'] ='Sole';
-            $aQuery['LANDINGPAGE'] = 'Billing';
+            $aQuery['LANDINGPAGE'] = 'Login';
+			$aQuery['TRANSACTIONTYP'] = 'cart';
             $aLangMap = $this->getConfig()->getConfigParam('v6c_aPayPalLangMap');
             $sLang = strtoupper(oxLang::getInstance()->getLanguageAbbr());
             if (isset($aLangMap[$sLang])) $aQuery['LOCALECODE'] = $aLangMap[$sLang];
@@ -355,14 +362,21 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
                 if (method_exists($this, '_v6cInitPayExt_PerArt')) $this->_v6cInitPayExt_PerArt($oBasketItem, $oProduct, $sRequest);
             }
             $oPrice = $oBasket->getPrice();
+
             // Fn provided for extensions: can modify request.
             if (method_exists($this, '_v6cInitPayExt_PreAmt')) $this->_v6cInitPayExt_PreAmt($oPrice, $sRequest);
             $sRequest .= '&DESC='.urlencode(utf8_encode(strlen($sDesc) > 120 ? substr($sDesc, 0, 117).'...' : $sDesc));
             $sRequest .= '&ITEMAMT='.number_format($oPrice->getNettoPrice(), 2);
             $sRequest .= '&TAXAMT='.number_format($oPrice->getVatValue(), 2);
-            $sRequest .= '&AMT='.number_format($oPrice->getBruttoPrice(), 2);
-            // Make request and check response
+			
+			if($iDelCosts > 0) {
+				$sRequest .= '&SHIPPINGAMT='.number_format($iDelCosts, 2);
+            }
+			
+			$sRequest .= '&AMT='.number_format($oPrice->getBruttoPrice()+$iDelCosts, 2);
+
             $aRet = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
+
             if ($aRet !== false && array_key_exists('ACK', $aRet) && strcasecmp($aRet['ACK'], 'Success') == 0)
             {
                 oxSession::setVar( 'v6c_sPaypalXprTkn', $aRet['TOKEN'] );
@@ -393,7 +407,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
                 if (array_key_exists('TOKEN', $this->_aGatewayParms))
                 {
                     $sUrl = $this->_v6cIsTestMode() ? 'https://www.sandbox.paypal.com/' : 'https://www.paypal.com/';
-                    $sUrl .= 'cgi-bin/webscr?cmd=_express-checkout&token='.$this->_aGatewayParms['TOKEN'];
+                    $sUrl .= 'cgi-bin/webscr?cmd=_express-checkout&token='.$this->_aGatewayParms['TOKEN'].'&useraction=commit';
                 }
                 break;
             case 'v6c_googlechkout':
