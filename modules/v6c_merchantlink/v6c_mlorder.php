@@ -153,11 +153,18 @@ class v6c_mlOrder extends v6c_mlOrder_parent
 
         // add gateway parms to userpayment
         $oUserPayment = $this->_v6cGetUserPayment();
-        if (isset($oUserPayment))
+    if (isset($oUserPayment))
+    {
+        // Get payment type
+        $oPayment = oxNew('oxPayment');
+        $oPayment->load($oUserPayment->oxuserpayments__oxpaymentsid->value);
+        // Only add merchant gateway info for linked payment types
+        if ($oPayment->v6cIsLinkedGateway())
         {
             $oUserPayment->oxuserpayments__oxvalue = new oxField(serialize($oGateway->v6cGetGatewayParms()), oxField::T_RAW);
             $oUserPayment->save();
         }
+    }
         //TODO: add ELSE to log failure to save parms
 
         return $mRet;
@@ -220,7 +227,7 @@ class v6c_mlOrder extends v6c_mlOrder_parent
         $sDate = date( 'Y-m-d H:i:s', oxUtilsDate::getInstance()->getTime() );
         $sQ = 	'update oxorder set oxtransstatus='.$oDb->quote( ($bPending ? 'PENDING' : 'OK') ).
         		', oxfolder='.$oDb->quote( 'ORDERFOLDER_NEW' ).
-        		', oxbillnr='.$oDb->quote( $sGatewayOrderId ).
+        		', oxtransid='.$oDb->quote( $sGatewayOrderId ).
         		( $bPending ? '' : ', oxpaid='.$oDb->quote( $sDate ) ).
         		' where oxid='.$oDb->quote( $this->getId() );
         $oDb->execute( $sQ );
@@ -228,7 +235,7 @@ class v6c_mlOrder extends v6c_mlOrder_parent
         //updating order object
         $this->oxorder__oxtransstatus = new oxField( ($bPending ? 'PENDING' : 'OK') );
         $this->oxorder__oxfolder = new oxField( 'ORDERFOLDER_NEW' );
-        $this->oxorder__oxbillnr = new oxField( $sGatewayOrderId );
+        $this->oxorder__oxtransid = new oxField( $sGatewayOrderId );
         if (!$bPending) $this->oxorder__oxpaid = new oxField( $sDate );
     }
 
@@ -241,7 +248,7 @@ class v6c_mlOrder extends v6c_mlOrder_parent
     */
     public function v6cLoadByMerchantId($sId)
     {
-        return $this->assignRecord("select * from oxorder where oxbillnr = '$sId'");
+        return $this->assignRecord("select * from oxorder where oxtransid = '$sId'");
     }
 
     /**
