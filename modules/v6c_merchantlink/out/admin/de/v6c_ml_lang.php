@@ -7,11 +7,11 @@ $aLang = array(
 'charset'                                   			=> 'ISO-8859-15',
 
 // Menu & tab titles
-'v6cmods'    							=> '6vC Einstellungen',
-'v6c_merchantlink'    						=> 'Händleranbindung',
+'v6cmods'    							=> '6vC PayPal-Modul',
+'v6c_merchantlink'    						=> 'PayPal Einstellungen',
 'v6c_merchantlink_main'						=> 'PayPal',
 'V6C_MENUITEM'    						=> '6vC Extensions',
-'V6C_MENUSUBITEM_MERCHLNK'    					=> 'Händleranbindung',
+'V6C_MENUSUBITEM_MERCHLNK'    					=> 'PayPal Einstellungen',
 
 // Configuration parameter descriptions and help content
 'V6C_INSTALL'							=> 'Installation/Update',
