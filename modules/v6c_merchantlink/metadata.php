@@ -57,7 +57,7 @@ $aModule = array(
     ),
     'blocks' => array(
         array('template' => 'page/checkout/thankyou.tpl', 'block'=>'checkout_thankyou_info', 'file'=>'v6c_ml_checkout_thankyou_info.tpl'),
-        array('template' => 'layout/sidebar.tpl', 'block'=>'sidebar', 'file'=>'/out/blocks/sidebar.tpl'),
+        array('template' => 'widget/sidebar/partners.tpl', 'block'=>'partner_logos', 'file'=>'/out/blocks/paypallogo.tpl'),
 
     ),
     'templates' => array(
