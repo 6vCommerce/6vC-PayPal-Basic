@@ -25,15 +25,7 @@
 *
 * @link      http://www.6vcommerce.ca
 * @copyright (C) 6vCommerce
-*
-* Changelog:
-* 13.3.2013 - Alexander Pick (ap@pbt-media.com) - Small Bugfixes, Workflow changes
-* 15.3.2013 - Alexander Pick (ap@pbt-media.com) - Multiple changes regarding order workflow 
-*
 */
-
-// enable tax values in basket
-define("orderShowTax",0); 
 
 /**
  * This class extends the oxPaymentGateway core class and should be configured in the
@@ -41,11 +33,8 @@ define("orderShowTax",0);
  *
  * 		oxpaymentgateway => v6c_merchantlink/v6c_mlpaymentgateway
  */
-
- 
 class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 {
-	
     /*TODO: Secure paypal key parameter:
     * 	- Add private key-seed to this class
     * 	- On install, change key-seed random value (file_ get_ contents -> preg_match -> file_ put_ contents)
@@ -308,10 +297,6 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
         // Init for PayPal Express
         if (strcmp($oPayment->oxpayments__v6link->value, 'v6c_paypalxpr') == 0)
         {
-			$oBasket->calculateBasket(true);
-	
-			$iDelCosts = $oBasket->getCosts( 'oxdelivery' )->getBruttoPrice();
-
             $res = false;
             // Server info
             $sServer = $this->_v6cIsTestMode() ? self::V6C_ML_PAYPAL_NVP_TSTSVR : self::V6C_ML_PAYPAL_NVP_SVR;
@@ -326,21 +311,17 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['PAYMENTACTION'] = 'Sale';
             $aQuery['RETURNURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=order';
             $aQuery['CANCELURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=v6c_redirectpost&fnc=v6cLinkedPayCancel';
-			$aQuery['NOTIFYURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=v6c_hPayPalIpn&v6c_gateway=paypal';
-            $aQuery['CURRENCYCODE'] = $this->getConfig()->getActShopCurrencyObject()->name;		
-			$aQuery['NOSHIPPING'] = 1;
+            $aQuery['CURRENCYCODE'] = $this->getConfig()->getActShopCurrencyObject()->name;
+            $aQuery['NOSHIPPING'] = 1;
             $aQuery['ADDROVERRIDE'] = 0;
             $aQuery['ALLOWNOTE'] = 0;
             $aQuery['SOLUTIONTYPE'] ='Sole';
-            $aQuery['LANDINGPAGE'] = 'Login';
-			$aQuery['TRANSACTIONTYP'] = 'cart';
+            $aQuery['LANDINGPAGE'] = 'Billing';
             $aLangMap = $this->getConfig()->getConfigParam('v6c_aPayPalLangMap');
             $sLang = strtoupper(oxLang::getInstance()->getLanguageAbbr());
             if (isset($aLangMap[$sLang])) $aQuery['LOCALECODE'] = $aLangMap[$sLang];
             // Generate user specific portion of request string (PayPal uses shipping fields to accomplish this)
-            
-			$oUser = $oBasket->getBasketUser();
-			
+            $oUser = $oBasket->getBasketUser();
             $oCountry = oxNew('oxCountry');
             $oCountry->load($oUser->oxuser__oxcountryid->value);
             $aQuery['SHIPTONAME'] = utf8_encode($oUser->oxuser__oxfname->rawValue.' '.$oUser->oxuser__oxlname->rawValue);
@@ -353,137 +334,35 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['SHIPTOPHONENUM'] = $oUser->oxuser__oxfon->value;
             $aQuery['EMAIL'] = utf8_encode($oUser->oxuser__oxusername->value);
 
-			// Generate basket specific portion of request string
-            $dBillAmt = doubleval(0);
-            $i = 0;
-            $sDesc = '';
-
-			$iSumPricesBrut 	= 0;
-			$iSumPricesNet	 	= 0;
-			$iLineNr			= 0;
-
-            foreach ($oBasket->getContents() as $oBasketItem)
-            {
-                
-                $oProduct = $oBasketItem->getArticle(false);
-
-				$iSumPricesBrut 	+= $oBasketItem->getPrice()->getBruttoPrice();
-				$iSumPricesNet 		+= $oBasketItem->getPrice()->getNettoPrice();
-				
-				$sArticleName = $oProduct->oxarticles__oxtitle->rawValue.(empty($oProduct->oxarticles__oxvarselect->value) ? '' : ' - '.$oProduct->oxarticles__oxvarselect->rawValue);
-				
-				if(!oxConfig::getInstance()->isUtf()) {
-					$aQuery['L_NAME'.$iLineNr] 	= utf8_encode($sArticleName);
-				} else {
-					$aQuery['L_NAME'.$iLineNr] = $sArticleName;
-				}
-				
-				$iQty = $oBasketItem->getAmount();
-				
-				if(orderShowTax == 1) {
-					$aQuery['L_AMT'.$iLineNr] 	= number_format($oBasketItem->getPrice()->getNettoPrice() / $iQty,2);
-				} else {
-					$aQuery['L_AMT'.$iLineNr] 	= number_format($oBasketItem->getPrice()->getBruttoPrice() / $iQty,2);
-				}
-				
-				$aQuery['L_NUMBER'.$iLineNr] 	= $oProduct->oxarticles__oxartnume->rawValue;
-		        $aQuery['L_QTY'.$iLineNr] 		= $iQty;
-				$aQuery['L_DESC'.$iLineNr] 		= $oProduct->oxarticles__oxeane->rawValue;
-				
-				$iLineNr++;				
-
-            }
-			
-			$iArticleSum		= $iSumPricesBrut + $iDelCosts;
-			$iFinalBasketPrice 	= $iArticleSum - $iDiscount;
-			$oPrice 			= $oBasket->getPrice();
-			$iBasketPrice 		= $oPrice->getBruttoPrice();
-			$iDiscount 			= $oBasket->getTotalDiscount()->getBruttoPrice();
-			
-			if($iDiscount != 0) {	
-				
-				$iDiscount = -$iDiscount;
-								
-				$aQuery['L_NAME'.$iLineNr] 		= oxLang::getInstance()->translateString("DISCOUNT");
-        		$aQuery['L_AMT'.$iLineNr] 		= number_format($iDiscount, 2);
-    		    $aQuery['L_NUMBER'.$iLineNr] 	= "";
-		        $aQuery['L_QTY'.$iLineNr] 		= 1;
-				$aQuery['L_DESC'.$iLineNr] 		= "";	
-				
-				$iLineNr++;
-				
-			} 
-			
-			$iPayCosts 	= $oBasket->getPaymentCosts();
-			
-			if($iPayCosts != 0) {
-																
-				$aQuery['L_NAME'.$iLineNr] 		= oxLang::getInstance()->translateString("SURCHARGE");
-        		$aQuery['L_AMT'.$iLineNr] 		= number_format($iPayCosts, 2);
-    		    $aQuery['L_NUMBER'.$iLineNr] 	= "";
-		        $aQuery['L_QTY'.$iLineNr] 		= 1;
-				$aQuery['L_DESC'.$iLineNr] 		= "";	
-				
-			} 
-			
-			// recalcualte VAT
-			$iSumTaxes  = 0;
-				
-			foreach ( $oBasket->getProductVats(false) as $iVat ) {
-				$iSumTaxes += $iVat;
-			}
-				
-			// basket price
-			if(orderShowTax == 1) {
-				$iFinalBasketPrice  = $oPrice->getNettoPrice(); // basket price
-			} else {
-				$iFinalBasketPrice  = $oPrice->getBruttoPrice(); 	
-			}
-			
-			// discounted articles
-			$iSumPricesNet 		= $oPrice->getNettoPrice() - $iSumTaxes;
-			$iSumPricesBrut 	= $oPrice->getBruttoPrice();
-			
-			$oxVersion = oxConfig::getInstance()->getActiveShop()->oxshops__oxversion->value;
-			
-			if(	oxConfig::getInstance()->getConfigParam( 'blCalcVATForDelivery' ) 
-				|| oxConfig::getInstance()->getConfigParam( 'blShowVATForPayCharge' )) {
-				
-				if(version_compare($oxVersion, '4.7.0', '>=')) {
-					$iShipTax = $oBasket->getAdditionalServicesVatPercent();
-					//TODO: Find a way to reflect Shipping taxes, PayPal does not know them and won't allow them in the list
-				} else {
-					$iShipTax = $oBasket->getMostUsedVatPercent();
-					//TODO: Find a way to reflect Shipping taxes, PayPal does not know them and won't allow them in the list
-				}
-			
-			}
-
-			if(orderShowTax == 1) {
-				$aQuery['ITEMAMT'] = number_format($iSumPricesNet - $iDelCosts, 2);
-				$aQuery['TAXAMT'] = number_format($iSumTaxes, 2);
-			} else {
-				$aQuery['ITEMAMT'] = number_format($iSumPricesBrut - $iDelCosts , 2);
-				$aQuery['TAXAMT'] = number_format(0, 2);				
-			}
-			
-          	$aQuery['SHIPPINGAMT'] = number_format($iDelCosts, 2);
-             
-			$aQuery['AMT'] = number_format($iFinalBasketPrice, 2);   
-			
-			//var_dump($aQuery);
-			//exit(0);
-						
-            // Fn provided for extensions: can modify request.
-            if (method_exists($this, '_v6cInitPayExt_PreAmt')) $this->_v6cInitPayExt_PreAmt($oPrice, $sRequest);
-
             // Check if any parameters require special handling
             if (method_exists($oPayment, 'v6cSetCustomGatewayParms')) $oPayment->v6cSetCustomGatewayParms($aQuery);
             // Convert array to string query
             $sRequest = http_build_query($aQuery);
 
+            // Generate basket specific portion of request string
+            $dBillAmt = doubleval(0);
+            $i = 0;
+            $sDesc = '';
+            foreach ($oBasket->getContents() as $oBasketItem)
+            {
+                /* NOTE:
+                 * Do not bother defining each item (L_NAME, L_AMT, L_QTY) because PayPal doesn't support
+                 * discounts.  As a result, only basket total is sent to PayPal.
+                 */
+                $oProduct = $oBasketItem->getArticle(false);
+                $sDesc .= (empty($sDesc) ? '' : ', ').$oBasketItem->getAmount().' x '.$oProduct->oxarticles__oxtitle->rawValue.(empty($oProduct->oxarticles__oxvarselect->value) ? '' : ' - '.$oProduct->oxarticles__oxvarselect->rawValue);
+                // Provide fn for extensions: can modify request value
+                if (method_exists($this, '_v6cInitPayExt_PerArt')) $this->_v6cInitPayExt_PerArt($oBasketItem, $oProduct, $sRequest);
+            }
+            $oPrice = $oBasket->getPrice();
+            // Fn provided for extensions: can modify request.
+            if (method_exists($this, '_v6cInitPayExt_PreAmt')) $this->_v6cInitPayExt_PreAmt($oPrice, $sRequest);
+            $sRequest .= '&DESC='.urlencode(utf8_encode(strlen($sDesc) > 120 ? substr($sDesc, 0, 117).'...' : $sDesc));
+            $sRequest .= '&ITEMAMT='.number_format($oPrice->getNettoPrice(), 2);
+            $sRequest .= '&TAXAMT='.number_format($oPrice->getVatValue(), 2);
+            $sRequest .= '&AMT='.number_format($oPrice->getBruttoPrice(), 2);
+            // Make request and check response
             $aRet = $this->_v6cPayPalNvpRequest($sServer, $sScript, $sRequest);
-
             if ($aRet !== false && array_key_exists('ACK', $aRet) && strcasecmp($aRet['ACK'], 'Success') == 0)
             {
                 oxSession::setVar( 'v6c_sPaypalXprTkn', $aRet['TOKEN'] );
@@ -491,7 +370,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
                 $res = true;
             }
             elseif ( $this->getConfig()->getConfigParam( 'iDebug' ) != 0 ) oxUtils::getInstance()->writeToLog("[".date('Y-m-d\TH:i:sP')."]\.".__CLASS__.".::".__FUNCTION__." (ln ".__LINE__.")\nNVP Init Failed! Response:\n".print_r($aRet, true)."\n\n", 'v6c_log.txt');
-        } 
+        }
 
         return $res;
     }
@@ -514,7 +393,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
                 if (array_key_exists('TOKEN', $this->_aGatewayParms))
                 {
                     $sUrl = $this->_v6cIsTestMode() ? 'https://www.sandbox.paypal.com/' : 'https://www.paypal.com/';
-                    $sUrl .= 'cgi-bin/webscr?cmd=_express-checkout&token='.$this->_aGatewayParms['TOKEN'].'&useraction=commit';
+                    $sUrl .= 'cgi-bin/webscr?cmd=_express-checkout&token='.$this->_aGatewayParms['TOKEN'];
                 }
                 break;
             case 'v6c_googlechkout':
