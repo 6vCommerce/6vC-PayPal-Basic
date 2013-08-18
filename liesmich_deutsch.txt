@@ -5,7 +5,7 @@ INSTALLATION DEUTSCH - Übersetzung durch eComStyle.de
 1. Voraussetzungen
 
 - Kompatibel mit OXID eShop 4.6 und 4.7.
-- Für Azure oder auf Azure basierende Themes. Basic Themes funktionieren nicht ohne Anpassungen!
+- Theme Azure oder OXID Mobile Theme. Auch darauf basierende Themes und Childthemes sind möglich.
 
 
 2. Kopiere die Dateien
