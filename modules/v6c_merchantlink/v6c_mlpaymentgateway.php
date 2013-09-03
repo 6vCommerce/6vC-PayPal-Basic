@@ -316,7 +316,10 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['ADDROVERRIDE'] = 0;
             $aQuery['ALLOWNOTE'] = 0;
             $aQuery['SOLUTIONTYPE'] ='Sole';
-            $aQuery['LANDINGPAGE'] = 'Billing';
+            if ($this->getConfig()->getConfigParam('v6c_Login'))
+            {$aQuery['LANDINGPAGE'] = 'Login';}
+            else
+            {$aQuery['LANDINGPAGE'] = 'Billing';}
             $aLangMap = $this->getConfig()->getConfigParam('v6c_aPayPalLangMap');
             $sLang = strtoupper(oxLang::getInstance()->getLanguageAbbr());
             if (isset($aLangMap[$sLang])) $aQuery['LOCALECODE'] = $aLangMap[$sLang];

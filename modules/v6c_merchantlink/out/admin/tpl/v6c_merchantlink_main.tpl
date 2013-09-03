@@ -154,6 +154,17 @@
          </td>
         </tr>
 
+         <tr class="conftext[{cycle}]">
+         <td valign="middle">
+            <input type=hidden name=confbools[v6c_Login] value=false>
+            <input type=checkbox name=confbools[v6c_Login] value=true  [{if ($confbools.v6c_Login)}]checked[{/if}] [{ $readonly }]>
+            [{ oxinputhelp ident="ECS_HELP_LANDING" }]
+         </td>
+         <td valign="middle" width="100%">
+          [{ oxmultilang ident="ECS_LANDING" }]
+         </td>
+        </tr>
+
 		<!-- Forcing width of first column -->
         <tr>
          <td valign="middle" class="nowrap">
