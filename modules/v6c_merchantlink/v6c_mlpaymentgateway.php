@@ -313,7 +313,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['CANCELURL'] = htmlspecialchars_decode($this->getConfig()->getShopHomeURL()).'cl=v6c_redirectpost&fnc=v6cLinkedPayCancel';
             $aQuery['CURRENCYCODE'] = $this->getConfig()->getActShopCurrencyObject()->name;
             $aQuery['NOSHIPPING'] = 1;
-            $aQuery['ADDROVERRIDE'] = 0;
+            $aQuery['ADDROVERRIDE'] = 1;
             $aQuery['ALLOWNOTE'] = 0;
             $aQuery['SOLUTIONTYPE'] ='Sole';
             if ($this->getConfig()->getConfigParam('v6c_Login'))
