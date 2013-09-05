@@ -327,6 +327,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $oUser = $oBasket->getBasketUser();
             $oCountry = oxNew('oxCountry');
             $oCountry->load($oUser->oxuser__oxcountryid->value);
+            if(!oxConfig::getInstance()->isUtf()) { 
             $aQuery['SHIPTONAME'] = utf8_encode($oUser->oxuser__oxfname->rawValue.' '.$oUser->oxuser__oxlname->rawValue);
             $aQuery['SHIPTOSTREET'] = utf8_encode($oUser->oxuser__oxstreet->rawValue);
             $aQuery['SHIPTOSTREET2'] = utf8_encode($oUser->oxuser__oxaddinfo->rawValue);
@@ -336,7 +337,17 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['SHIPTOCOUNTRY'] = $oCountry->oxcountry__oxisoalpha2->value;
             $aQuery['SHIPTOPHONENUM'] = $oUser->oxuser__oxfon->value;
             $aQuery['EMAIL'] = utf8_encode($oUser->oxuser__oxusername->value);
-
+        	} else { 
+        	$aQuery['SHIPTONAME'] = $oUser->oxuser__oxfname->rawValue.' '.$oUser->oxuser__oxlname->rawValue;
+            $aQuery['SHIPTOSTREET'] = $oUser->oxuser__oxstreet->rawValue;
+            $aQuery['SHIPTOSTREET2'] = $oUser->oxuser__oxaddinfo->rawValue;
+            $aQuery['SHIPTOCITY'] = $oUser->oxuser__oxcity->rawValue;
+            $aQuery['SHIPTOSTATE'] = $oUser->oxuser__oxstateid->value;
+            $aQuery['SHIPTOZIP'] = $oUser->oxuser__oxzip->value;
+            $aQuery['SHIPTOCOUNTRY'] = $oCountry->oxcountry__oxisoalpha2->value;
+            $aQuery['SHIPTOPHONENUM'] = $oUser->oxuser__oxfon->value;
+            $aQuery['EMAIL'] = $oUser->oxuser__oxusername->value;
+        	}
             // Check if any parameters require special handling
             if (method_exists($oPayment, 'v6cSetCustomGatewayParms')) $oPayment->v6cSetCustomGatewayParms($aQuery);
             // Convert array to string query
@@ -360,7 +371,11 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $oPrice = $oBasket->getPrice();
             // Fn provided for extensions: can modify request.
             if (method_exists($this, '_v6cInitPayExt_PreAmt')) $this->_v6cInitPayExt_PreAmt($oPrice, $sRequest);
-            $sRequest .= '&DESC='.urlencode(utf8_encode(strlen($sDesc) > 120 ? substr($sDesc, 0, 117).'...' : $sDesc));
+            if(!oxConfig::getInstance()->isUtf()) { 
+            $sRequest .= '&DESC='.urlencode(utf8_encode(strlen($sDesc) > 120 ? substr($sDesc, 0, 117).'...' : $sDesc));   
+            } else { 
+            $sRequest .= '&DESC='.urlencode(strlen($sDesc) > 120 ? substr($sDesc, 0, 117).'...' : $sDesc); 
+            }
             $sRequest .= '&ITEMAMT='.number_format($oPrice->getNettoPrice(), 2);
             $sRequest .= '&TAXAMT='.number_format($oPrice->getVatValue(), 2);
             $sRequest .= '&AMT='.number_format($oPrice->getBruttoPrice(), 2);
