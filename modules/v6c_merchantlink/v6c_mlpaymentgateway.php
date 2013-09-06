@@ -329,8 +329,8 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $oCountry->load($oUser->oxuser__oxcountryid->value);
             if(!oxConfig::getInstance()->isUtf()) { 
             $aQuery['SHIPTONAME'] = utf8_encode($oUser->oxuser__oxfname->rawValue.' '.$oUser->oxuser__oxlname->rawValue);
-            $aQuery['SHIPTOSTREET'] = utf8_encode($oUser->oxuser__oxstreet->rawValue.' '.$oUser->oxuser__oxstreetnr->rawValue);
-            $aQuery['SHIPTOSTREET2'] = utf8_encode($oUser->oxuser__oxcompany->rawValue);
+            $aQuery['SHIPTOSTREET2'] = utf8_encode($oUser->oxuser__oxstreet->rawValue.' '.$oUser->oxuser__oxstreetnr->rawValue);
+            $aQuery['SHIPTOSTREET'] = utf8_encode($oUser->oxuser__oxcompany->rawValue);
             $aQuery['SHIPTOCITY'] = utf8_encode($oUser->oxuser__oxcity->rawValue);
             $aQuery['SHIPTOSTATE'] = $oUser->oxuser__oxstateid->value;
             $aQuery['SHIPTOZIP'] = $oUser->oxuser__oxzip->value;
@@ -339,8 +339,8 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['EMAIL'] = utf8_encode($oUser->oxuser__oxusername->value);
         	} else { 
         	$aQuery['SHIPTONAME'] = $oUser->oxuser__oxfname->rawValue.' '.$oUser->oxuser__oxlname->rawValue;
-            $aQuery['SHIPTOSTREET'] = $oUser->oxuser__oxstreet->rawValue.' '.$oUser->oxuser__oxstreetnr->rawValue;
-            $aQuery['SHIPTOSTREET2'] = $oUser->oxuser__oxcompany->rawValue;
+            $aQuery['SHIPTOSTREET2'] = $oUser->oxuser__oxstreet->rawValue.' '.$oUser->oxuser__oxstreetnr->rawValue;
+            $aQuery['SHIPTOSTREET'] = $oUser->oxuser__oxcompany->rawValue;
             $aQuery['SHIPTOCITY'] = $oUser->oxuser__oxcity->rawValue;
             $aQuery['SHIPTOSTATE'] = $oUser->oxuser__oxstateid->value;
             $aQuery['SHIPTOZIP'] = $oUser->oxuser__oxzip->value;
