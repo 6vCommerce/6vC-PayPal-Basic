@@ -34,4 +34,5 @@ $aLang = array(
     'V6C_ORDER_ERRBSKLDFAIL'                    => 'Fehler beim Laden des Warenkorbs für den Benutzer, der dieser Bestellung zugeordnet ist.',
     'V6C_ORDER_ERRPAYLDFAIL'                    => 'Fehler beim Laden der Zahlung aus der Bestellinformation.',
     'V6C_ORDER_ERRPAYMISMATCH'                  => 'Der Betrag, der vom PayPal-Portal bestätigt wurde, ist anders als der Betrag der Bestellung.',
+    'WIDGET_TRUSTED_SHOPS'                      => 'Partner und Siegel',
 );

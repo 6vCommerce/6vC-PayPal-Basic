@@ -40,4 +40,6 @@ $aLang = array(
 'V6C_PAYPALSBNVPUSR'						=> 'Sandbox PayPal NVP user ID.',
 'V6C_PAYPALSBNVPPWD'						=> 'Sandbox PayPal NVP password.',
 'V6C_PAYPALSBNVPSIG'						=> 'Sandbox PayPal NVP Signature.',
+
+'ECS_LANDING'					         => 'PayPal-Landingpage',
 );

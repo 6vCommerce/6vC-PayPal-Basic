@@ -28,7 +28,7 @@ INSTALLATION
 
 1. Prerequisites & Compatability
 
-- Compatible with OXID eShop 4.6.x (last verified with 4.6.5).
+- Compatible with OXID eShop 4.6.x, 4.7.x (last verified with 4.7.7) and 4.8.x (last verified with 4.8.0 beta).
 - With some additional setup steps, also compatible with 4.5.x (last verifed with 4.5.11).
 
 2. Copy Files

@@ -4,8 +4,8 @@ INSTALLATION DEUTSCH - Übersetzung durch eComStyle.de
 
 1. Voraussetzungen
 
-- Kompatibel mit OXID eShop 4.6 und 4.7.
-- Für Azure oder auf Azure basierende Themes. Basic Themes funktionieren nicht ohne Anpassungen!
+- Kompatibel mit OXID eShop 4.6, 4.7 und 4.8.
+- Theme Azure oder OXID Mobile Theme. Auch darauf basierende Themes und Childthemes sind möglich.
 
 
 2. Kopiere die Dateien
@@ -21,15 +21,17 @@ INSTALLATION DEUTSCH - Übersetzung durch eComStyle.de
 - Aktiviere das Modul "6vC MerchantLink" unter Erweiterungen > Module.
 - Leere den tmp- und ab Shopversion 4.7 den tmp/smarty-Ordner, sonst sind die folgenden Einstellungen evtl. nicht verfügbar.
 
-- Drücke den "Installation/Update"-Button unter 6vC Einstellungen > Händleranbindung > PayPal, dann den "VIEWS jetzt updaten-Button" unter Service > Tools.
-- Stammdaten > Grundeinstellungen > Einstell. > Administrationsbereich > Ordner für CMS-Seiten: Füge folgende Zeile hinzu: V6C_ORDERFOLDER_PENDING => #AAAAAA
+- Drücke den "Installation/Update"-Button unter 6vC PayPal-Modul > PayPal Einstellungen > PayPal, dann den "VIEWS jetzt updaten-Button" unter Service > Tools.
+- Stammdaten > Grundeinstellungen > Einstell. > Administrationsbereich > Ordner in der Bestellungsverwaltung: Füge folgende Zeile hinzu: V6C_ORDERFOLDER_PENDING => #AAAAAA
 
-- 6vC Einstellungen > Händleranbindung > PayPal: Trage die mit dem PayPal-Konto verknüpfte Email-Adresse, die PayPal-Händler-Konto-ID, die API Benutzer ID, API Passwort und API Signatur ein (diese Daten findest Du in deinem PayPal-Geschäftskonto unter "Mein Profil").
-- 6vC Einstellungen > Händleranbindung > PayPal: Aktiviere "Führe alle Transaktionen über SSL aus" (diese Option sollte aktiviert werden, selbst wenn kein SSL vorhanden ist).
+- 6vC PayPal-Modul > PayPal Einstellungen > PayPal: Trage die mit dem PayPal-Konto verknüpfte Email-Adresse, die PayPal-Händler-Konto-ID, die API Benutzer ID, API Passwort und API Signatur ein (diese Daten findest Du in deinem PayPal-Geschäftskonto unter "Mein Profil").
+- 6vC PayPal-Modul > PayPal Einstellungen > PayPal: Aktiviere "Führe alle Transaktionen über SSL aus" (diese Option sollte aktiviert werden, selbst wenn kein SSL vorhanden ist).
 - Das Feld "Sprache für PayPal "lc" Wert" kann in den meisten Fällen leer bleiben. Die "Sandbox"-Felder müssen nur bei Bedarf ausgefüllt bzw. aktiviert werden
 
 - Shop Einstellungen > Zahlungsarten: Aktiviere die Zahlungsmethode "Credit Card or PayPal" und konfiguriere sie (Benutzergruppen müssen zugewiesen werden!).
 - Shop Einstellungen > Versandarten: Weise im Register "Zahlungsarten" PayPal den gewünschten Versandarten zu (den Versandarten müssen Zahlungsarten zugewiesen werden!).
+
+- Leere den tmp- und ab Shopversion 4.7 den tmp/smarty-Ordner erneut.
 
 
 4. PayPal Einstellungen
