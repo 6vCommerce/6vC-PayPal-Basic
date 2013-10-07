@@ -742,6 +742,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	        @curl_setopt($hCurl, CURLOPT_SSL_VERIFYPEER, false);
 	        @curl_setopt($hCurl, CURLOPT_SSL_VERIFYHOST, false);
 	        @curl_setopt($hCurl, CURLOPT_VERBOSE, true);
+	        @curl_setopt($hCurl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 	        $bResult = @curl_exec($hCurl);
 	        if (!$bResult)
 	        {
