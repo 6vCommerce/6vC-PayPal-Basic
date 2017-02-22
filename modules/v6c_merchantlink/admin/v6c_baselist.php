@@ -114,13 +114,13 @@ class v6c_BaseList extends oxAdminList
 
         if ( $this->_aViewData['updatenav'] ) {
             //skipping requirements checking when reloading nav frame
-            oxSession::setVar( "navReload", true );
+            oxRegistry::getSession()->setVariable( "navReload", true );
         }
 
         //making sure we really change shops on low level
         if ( $soxId && $soxId != '-1' ) {
             $myConfig->setShopId( $soxId );
-            oxSession::setVar( 'currentadminshop', $soxId );
+            oxRegistry::getSession()->setVariable( 'currentadminshop', $soxId );
         }
 
         return $this->_sTemplate;
@@ -135,9 +135,9 @@ class v6c_BaseList extends oxAdminList
     {
         // we override this to add our shop if we are not malladmin
         $this->_aWhere = parent::buildWhere();
-        if ( !oxSession::getVar( 'malladmin' ) ) {
+        if ( !oxRegistry::getSession()->getVariable( 'malladmin' ) ) {
             // we only allow to see our shop
-            $this->_aWhere[ getViewName( "oxshops" ) . ".oxid" ] = oxSession::getVar( "actshop" );
+            $this->_aWhere[ getViewName( "oxshops" ) . ".oxid" ] = oxRegistry::getSession()->getVariable( "actshop" );
         }
 
         return $this->_aWhere;

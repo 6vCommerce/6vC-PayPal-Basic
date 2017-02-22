@@ -64,7 +64,7 @@ class v6c_mlBasketItem extends v6c_mlBasketItem_parent
         $this->_blSsl    = $oConfig->isSsl();
 
         // removing force_sid from the link (incase it'll change)
-        $this->_sLink    = oxUtilsUrl::getInstance()->cleanUrl( $oArticle->getLink(), array( 'force_sid' ) );
+        $this->_sLink    = oxRegistry::get("oxUtilsUrl")->cleanUrl( $oArticle->getLink(), array( 'force_sid' ) );
 
         // shop Ids
         $this->_sShopId       = $oConfig->getShopId();
@@ -96,7 +96,7 @@ class v6c_mlBasketItem extends v6c_mlBasketItem_parent
     {
         try {
             //validating amount
-            $dAmount = oxInputValidator::getInstance()->validateBasketAmount( $dAmount );
+            $dAmount = oxRegistry::get("oxInputValidator")->validateBasketAmount( $dAmount );
         } catch( oxArticleInputException $oEx ) {
             $oEx->setArticleNr( $this->getProductId() );
             $oEx->setProductId( $this->getProductId() );
@@ -202,7 +202,7 @@ class v6c_mlBasketItem extends v6c_mlBasketItem_parent
 	{
 		if (!isset($this->_v6c_oBasket))
 		{
-			$this->_v6c_oBasket = $this->getSession()->getBasket();
+			$this->_v6c_oBasket = oxRegistry::getSession()->getBasket();
 		}
 		return $this->_v6c_oBasket;
 	}

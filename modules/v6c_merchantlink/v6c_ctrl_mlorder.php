@@ -55,7 +55,7 @@ class v6c_ctrl_mlOrder extends v6c_ctrl_mlorder_parent
             /* TODO
              * WIP: Code to save payment authorizations
             // Flag integrated linked merchant gateway step as completed
-            oxSession::setVar( 'v6c_bHaveLnkPayInfo', true );
+            oxRegistry::getSession()->setVariable( 'v6c_bHaveLnkPayInfo', true );
             */
             // Process any query strings returned by gateway (via return URL)
             $oPaymentGateway = oxNew('oxPaymentGateway');

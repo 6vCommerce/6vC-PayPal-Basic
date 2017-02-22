@@ -29,8 +29,8 @@ $sMetadataVersion = '1.0';
  */
 $aModule = array(
     'id'	            => 'v6c_merchantlink',
-    'title'             => '6vC MerchantLink',
-    'description'       => 'Module for interfacing with merchant gateways.',
+    'title'             => '6vC MerchantLink (Updated for 4.10.x)',
+    'description'       => 'Module for interfacing with merchant gateways.<br>Updated wo work with OXID 4.10.x.',
     'thumbnail'         => 'logo-sqr.png',
     'version'           => '1.1.3',
     'author'            => '6vCommerce',
@@ -42,7 +42,7 @@ $aModule = array(
         'thankyou' => 'v6c_merchantlink/v6c_ctrl_mlthankyou',
         'oxbasket' => 'v6c_merchantlink/v6c_mlbasket',
         'oxbasketitem' => 'v6c_merchantlink/v6c_mlbasketitem',
-        'oxemail' => 'v6c_merchantlink/v6c_mlemail',
+//        'oxemail' => 'v6c_merchantlink/v6c_mlemail',
         'oxorder' => 'v6c_merchantlink/v6c_mlorder',
         'oxpayment' => 'v6c_merchantlink/v6c_mlpayment',
         'oxpaymentgateway' => 'v6c_merchantlink/v6c_mlpaymentgateway',
@@ -56,12 +56,16 @@ $aModule = array(
         'v6c_RedirectPost'=> 'v6c_merchantlink/views/v6c_redirectpost.php',
     ),
     'blocks' => array(
-        array('template' => 'page/checkout/thankyou.tpl', 'block'=>'checkout_thankyou_info', 'file'=>'v6c_ml_checkout_thankyou_info.tpl'),
+        array(
+            'template' => 'page/checkout/thankyou.tpl',
+            'block'=>'checkout_thankyou_info',
+            'file'=>'views/blocks/v6c_ml_checkout_thankyou_info.tpl'
+        ),
     ),
     'templates' => array(
-    	'v6c_container.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_container.tpl',
-    	'v6c_merchantlink_list.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_merchantlink_list.tpl',
-    	'v6c_merchantlink_main.tpl' => 'v6c_merchantlink/out/admin/tpl/v6c_merchantlink_main.tpl',
-    	'v6c_redirectpost.tpl' => 'v6c_merchantlink/out/azure/tpl/custom/v6c_redirectpost.tpl',
+    	'v6c_container.tpl' => 'v6c_merchantlink/views/admin/tpl/v6c_container.tpl',
+    	'v6c_merchantlink_list.tpl' => 'v6c_merchantlink/views/admin/tpl/v6c_merchantlink_list.tpl',
+    	'v6c_merchantlink_main.tpl' => 'v6c_merchantlink/views/admin/tpl/v6c_merchantlink_main.tpl',
+    	'v6c_redirectpost.tpl' => 'v6c_merchantlink/views/azure/tpl/custom/v6c_redirectpost.tpl',
     )
 );

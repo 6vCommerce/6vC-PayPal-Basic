@@ -69,10 +69,10 @@ class v6c_mlOrder extends v6c_mlOrder_parent
      *
      * @return bool
      */
-    protected function _sendOrderByEmail( oxUser $oUser, oxbasket $oBasket, oxUserPayment $oUsrPayment )
-    {
-    	return parent::_sendOrderByEmail($oUser,$oBasket,$oUsrPayment);
-    }
+//    protected function _sendOrderByEmail( oxUser $oUser, oxbasket $oBasket, oxUserPayment $oUsrPayment )
+//    {
+//    	return parent::_sendOrderByEmail($oUser,$oBasket,$oUsrPayment);
+//    }
 
 
 	/////////////////////// EXTENSIONS ////////////////////////////
