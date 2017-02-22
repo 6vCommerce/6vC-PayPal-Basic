@@ -21,17 +21,17 @@ class v6c_MerchantLink extends oxAdminView
     {
         parent::render();
 
-            $sCurrentAdminShop = oxSession::getVar("currentadminshop");
+            $sCurrentAdminShop = oxRegistry::getSession()->getVariable("currentadminshop");
 
             if (!$sCurrentAdminShop) {
-                if (oxSession::getVar( "malladmin"))
+                if (oxRegistry::getSession()->getVariable( "malladmin"))
                     $sCurrentAdminShop = "oxbaseshop";
                 else
-                    $sCurrentAdminShop = oxSession::getVar( "actshop");
+                    $sCurrentAdminShop = oxRegistry::getSession()->getVariable( "actshop");
             }
 
             $this->_aViewData["currentadminshop"] = $sCurrentAdminShop;
-            oxSession::setVar("currentadminshop", $sCurrentAdminShop);
+            oxRegistry::getSession()->setVariable("currentadminshop", $sCurrentAdminShop);
 
 
         return "v6c_container.tpl";

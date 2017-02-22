@@ -303,7 +303,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
         // allow payment types that don't require init to pass check
         $res = true;
         // reset any prev results
-        oxSession::deleteVar('v6c_sPaypalXprTkn');
+        oxRegistry::getSession()->deleteVariable('v6c_sPaypalXprTkn');
 
         // Init for PayPal Express
         if (strcmp($oPayment->oxpayments__v6link->value, 'v6c_paypalxpr') == 0)
@@ -335,7 +335,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
             $aQuery['LANDINGPAGE'] = 'Login';
 			$aQuery['TRANSACTIONTYP'] = 'cart';
             $aLangMap = $this->getConfig()->getConfigParam('v6c_aPayPalLangMap');
-            $sLang = strtoupper(oxLang::getInstance()->getLanguageAbbr());
+            $sLang = strtoupper(oxRegistry::getLang()->getLanguageAbbr());
             if (isset($aLangMap[$sLang])) $aQuery['LOCALECODE'] = $aLangMap[$sLang];
             // Generate user specific portion of request string (PayPal uses shipping fields to accomplish this)
             
@@ -372,7 +372,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 				
 				$sArticleName = $oProduct->oxarticles__oxtitle->rawValue.(empty($oProduct->oxarticles__oxvarselect->value) ? '' : ' - '.$oProduct->oxarticles__oxvarselect->rawValue);
 				
-				if(!oxConfig::getInstance()->isUtf()) {
+				if(!oxRegistry::getConfig()->getConfigParam('iUtfMode')) {
 					$aQuery['L_NAME'.$iLineNr] 	= utf8_encode($sArticleName);
 				} else {
 					$aQuery['L_NAME'.$iLineNr] = $sArticleName;
@@ -444,10 +444,10 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 			$iSumPricesNet 		= $oPrice->getNettoPrice() - $iSumTaxes;
 			$iSumPricesBrut 	= $oPrice->getBruttoPrice();
 			
-			$oxVersion = oxConfig::getInstance()->getActiveShop()->oxshops__oxversion->value;
+			$oxVersion = oxRegistry::getConfig()->getActiveShop()->oxshops__oxversion->value;
 			
-			if(	oxConfig::getInstance()->getConfigParam( 'blCalcVATForDelivery' ) 
-				|| oxConfig::getInstance()->getConfigParam( 'blShowVATForPayCharge' )) {
+			if(	oxRegistry::getConfig()->getConfigParam( 'blCalcVATForDelivery' )
+				|| oxRegistry::getConfig()->getConfigParam( 'blShowVATForPayCharge' )) {
 				
 				if(version_compare($oxVersion, '4.7.0', '>=')) {
 					$iShipTax = $oBasket->getAdditionalServicesVatPercent();
@@ -486,7 +486,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 
             if ($aRet !== false && array_key_exists('ACK', $aRet) && strcasecmp($aRet['ACK'], 'Success') == 0)
             {
-                oxSession::setVar( 'v6c_sPaypalXprTkn', $aRet['TOKEN'] );
+                oxRegistry::getSession()->setVariable( 'v6c_sPaypalXprTkn', $aRet['TOKEN'] );
                 $this->_aGatewayParms = $aRet;
                 $res = true;
             }
@@ -666,7 +666,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 
 			// Reset lang for existing (static) objects, particularly those we know will be used
 			// such as for order emails.
-			oxConfig::getInstance()->getActiveShop(); // 'get' triggers lang reset
+			oxRegistry::getConfig()->getActiveShop(); // 'get' triggers lang reset
 	}
 
 	/**
@@ -823,8 +823,8 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	*/
 	public function v6c_paypalxpr_ProcessQueryStr()
 	{
-	    $sPayerId = oxConfig::getParameter('PayerID');
-	    if (isset($sPayerId)) oxSession::setVar('v6cPaypalxprPayerId', $sPayerId);
+	    $sPayerId = oxRegistry::getConfig()->getConfigParam('PayerID');
+	    if (isset($sPayerId)) oxRegistry::getSession()->setVariable('v6cPaypalxprPayerId', $sPayerId);
 	}
 
 	/**
@@ -834,7 +834,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	*/
 	protected function _v6c_paypalxpr_GetPayerId()
 	{
-	    return oxSession::getVar('v6cPaypalxprPayerId');
+	    return oxRegistry::getSession()->getVariable('v6cPaypalxprPayerId');
 	}
 
 	/**
@@ -857,7 +857,7 @@ class v6c_mlPaymentGateway extends v6c_mlPaymentGateway_parent
 	    $bRes = true;
 	    $this->_blActive = true;
 	    // Make sure token is available
-	    $sToken = oxSession::getVar('v6c_sPaypalXprTkn');
+	    $sToken = oxRegistry::getSession()->getVariable('v6c_sPaypalXprTkn');
 	    if (!isset($sToken))
 	    {
 	        $this->_iLastErrorNo = __LINE__;

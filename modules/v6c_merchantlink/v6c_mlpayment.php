@@ -132,8 +132,8 @@ class v6c_mlPayment extends v6c_mlPayment_parent
 				switch ($this->oxpayments__v6link->value)
 				{
 					case 'v6c_paypalstd':
-						if (oxConfig::getParameter('custom') !== null)
-						{ $this->_v6c_aCustInfo = unserialize(stripslashes(htmlspecialchars_decode(oxConfig::getParameter('custom')))); }
+						if (oxRegistry::getConfig()->getConfigParam('custom') !== null)
+						{ $this->_v6c_aCustInfo = unserialize(stripslashes(htmlspecialchars_decode(oxRegistry::getConfig()->getConfigParam('custom')))); }
 						break;
 					case 'v6c_googlechkout':
 						break;

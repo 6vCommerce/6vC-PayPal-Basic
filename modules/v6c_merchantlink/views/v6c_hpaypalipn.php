@@ -38,7 +38,7 @@ class v6c_hPayPalIpn extends oxUBase
     	    $oOrder->v6cSetAsPaid();
     	    // Notify admin
     	    $oxEmail = oxNew( 'oxemail' );
-    	    $oShop = oxConfig::getInstance()->getActiveShop();
+    	    $oShop = oxRegistry::getConfig()->getActiveShop();
     	    $sMsg = "Order #".$oOrder->oxorder__oxordernr->value." has been paid and it's status changed from 'PENDING' to 'OK'";
     	    $oxEmail->sendEmail($oShop->oxshops__oxowneremail->value, "Order #".$oOrder->oxorder__oxordernr->value." Paid", $sMsg);
     	}

@@ -23,11 +23,11 @@ class v6c_RedirectPost extends oxUBase
             $oPayment   = oxNew( 'oxpayment' );
 
             if ( $sPaymentid && $oPayment->load( $sPaymentid ) &&
-                $oPayment->isValidPayment( oxSession::getVar( 'dynvalue' ),
+                $oPayment->isValidPayment( oxRegistry::getSession()->getVariable( 'dynvalue' ),
                                            $this->getConfig()->getShopId(),
                                            $oUser,
                                            $oBasket->getPriceForPayment(),
-                                           oxSession::getVar( 'sShipSet' ) ) ) {
+                    oxRegistry::getSession()->getVariable( 'sShipSet' ) ) ) {
                 $this->_oPayment = $oPayment;
             }
         }
@@ -62,12 +62,12 @@ class v6c_RedirectPost extends oxUBase
         $myConfig = $this->getConfig();
 
         // Check for agreement to terms and conditions, if applicable
-        if ( !oxConfig::getParameter( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
+        if ( !oxRegistry::getConfig()->getConfigParam( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
             //oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=order&fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken'));
             if ($this->getConfig()->getConfigParam( 'v6c_blCompactChkOut' ))
-                return 'v6c_ctrl_Options?fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken');
+                return 'v6c_ctrl_Options?fnc=execute&ord_agb=0&stoken='.oxRegistry::getConfig()->getConfigParam('stoken');
             else
-                return 'order?fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken');
+                return 'order?fnc=execute&ord_agb=0&stoken='.oxRegistry::getConfig()->getConfigParam('stoken');
         }
     }
 
@@ -82,7 +82,7 @@ class v6c_RedirectPost extends oxUBase
         $myConfig = $this->getConfig();
 
         // Check for agreement to terms and conditions, if applicable
-        if (!$this->v6cIsIntegratedLink() && !oxConfig::getParameter( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
+        if (!$this->v6cIsIntegratedLink() && !oxRegistry::getConfig()->getConfigParam( 'ord_agb' ) && $myConfig->getConfigParam( 'blConfirmAGB' ) ) {
             //oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=order&fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken'));
             if ($this->getConfig()->getConfigParam( 'v6c_blCompactChkOut' ))
             {
@@ -90,7 +90,7 @@ class v6c_RedirectPost extends oxUBase
             }
             else
             {
-                oxUtils::getInstance()->redirect($this->getConfig()->getShopHomeURL().'cl=order&fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken'));
+                oxRegistry::getUtils()->redirect($this->getConfig()->getShopHomeURL().'cl=order&fnc=execute&ord_agb=0&stoken='.oxRegistry::getConfig()->getConfigParam('stoken'));
                 return; //'order?fnc=execute&ord_agb=0&stoken='.oxConfig::getParameter('stoken');
             }
         }
@@ -247,7 +247,7 @@ class v6c_RedirectPost extends oxUBase
 	{
 	    $this->_v6c_bAutoPost = false;
 	    $this->_v6c_bCancel = true;
-	    oxUtilsView::getInstance()->addErrorToDisplay( oxLang::getInstance()->translateString('V6C_PAGE_CHECKOUT_PAYMENT_USRCANCEL') );
+        oxRegistry::get("oxUtilsView")->addErrorToDisplay(oxRegistry::getLang()->translateString('V6C_PAGE_CHECKOUT_PAYMENT_USRCANCEL') );
 	}
 
 	/**

@@ -54,7 +54,7 @@ class v6c_MerchantLinkMain extends Shop_Config
 	    		$sVal = 'disabled';
     	} else {
     		$sVal = '';
-    		oxSession::setVar('v6c_aMlInstSteps', $aInstallSteps);
+            oxRegistry::getSession()->setVariable('v6c_aMlInstSteps', $aInstallSteps);
     	}
 
     	$this->_aViewData["v6c_sMlInstalled"] = $sVal;
@@ -95,7 +95,7 @@ class v6c_MerchantLinkMain extends Shop_Config
     {
     	$oDB = oxDb::getDb();
     	$sVersion = $this->getConfig()->getActiveShop()->oxshops__oxversion->value;
-    	$aInstallSteps = oxSession::getVar('v6c_aMlInstSteps');
+    	$aInstallSteps = oxRegistry::getSession()->getVariable('v6c_aMlInstSteps');
     	if (!isset($aInstallSteps)) return;
 
     	if (in_array('AddColV6LINK', $aInstallSteps)) $oDB->execute("ALTER TABLE `oxpayments` ADD COLUMN `V6LINK` VARCHAR(45) NOT NULL DEFAULT ''");
@@ -118,7 +118,7 @@ class v6c_MerchantLinkMain extends Shop_Config
         $oDB = oxDb::getDb();
 
         // Class extensions installed/updated?
-    	if ( !v6cIsModuleClassesSet(oxConfig::getInstance()->getConfigParam('aModules'), $this->_v6c_aClsExt, $this->_v6c_aModuleName) )
+    	if ( !v6cIsModuleClassesSet(oxRegistry::getConfig()->getConfigParam('aModules'), $this->_v6c_aClsExt, $this->_v6c_aModuleName) )
     	{
     	    $aInstStps[] = 'InstModExt';
     	}
@@ -146,7 +146,7 @@ class v6c_MerchantLinkMain extends Shop_Config
         // Install/update module class extensions
     	if (in_array('InstModExt', $aInstallSteps))
     	{
-    	    v6cSetModuleClasses($this->_v6c_aModuleName, $this->_v6c_aClsExt, oxConfig::getInstance());
+    	    v6cSetModuleClasses($this->_v6c_aModuleName, $this->_v6c_aClsExt, oxRegistry::getConfig());
     	}
 
 //     	if (in_array('AddPayPalXpr', $aInstallSteps))

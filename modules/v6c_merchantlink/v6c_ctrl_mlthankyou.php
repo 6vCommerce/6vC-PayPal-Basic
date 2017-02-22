@@ -48,8 +48,8 @@ class v6c_ctrl_mlThankYou extends v6c_ctrl_mlThankYou_parent
     	else
     	{
     	    // Do not want any errors to show to user.
-    	    $aErrors = oxSession::getVar( 'Errors' );
-    	    oxSession::deleteVar('Errors');
+    	    $aErrors = oxRegistry::getSession()->getVariable( 'Errors' );
+            oxRegistry::getSession()->deleteVariable('Errors');
 
     		oxUBase::render();
 
@@ -79,11 +79,11 @@ class v6c_ctrl_mlThankYou extends v6c_ctrl_mlThankYou_parent
             $sErr .= "\n";
 	    	// notify admin of error
     		$oxEmail = oxNew( 'oxemail' );
-    		$oShop = oxConfig::getInstance()->getActiveShop();
+    		$oShop = oxRegistry::getConfig()->getActiveShop();
     		if ( !$oxEmail->sendEmail($oShop->oxshops__oxowneremail->value, "Order Confirmation Failed", $sErr) )
     		{
     			// resort to log file...
-    			oxUtils::getInstance()->writeToLog($sErr, 'v6c_log.txt');
+    			oxRegistry('oxUtils')->writeToLog($sErr, 'v6c_log.txt');
     		}
 
     		// Flag for display of user-friendly msg
